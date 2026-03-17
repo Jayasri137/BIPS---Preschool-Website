@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  ClipboardList, 
-  UserCheck, 
-  CalendarDays, 
-  X, 
-  Loader2 
+import {
+  CheckCircle,
+  AlertCircle,
+  ClipboardList,
+  UserCheck,
+  CalendarDays,
+  X,
+  Loader2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
 export default function Admissions() {
   const navigate = useNavigate();
@@ -36,24 +37,24 @@ export default function Admissions() {
   // 1. UPDATED VALIDATION LOGIC
   const validateForm = () => {
     let newErrors = {};
-    
+
     if (!formData.parentName.trim()) newErrors.parentName = "Parent name is required";
     if (!formData.studentName.trim()) newErrors.studentName = "Student name is required";
     if (!formData.dob) newErrors.dob = "Date of Birth is required";
     if (!formData.gender) newErrors.gender = "Please select gender";
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
     } else if (!/^\d{10}$/.test(formData.phone)) {
       newErrors.phone = "Enter a valid 10-digit number";
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
     }
-    
+
     if (!formData.program) newErrors.program = "Please select a program";
 
     setErrors(newErrors);
@@ -73,12 +74,12 @@ export default function Admissions() {
     if (!validateForm()) return;
 
     setLoading(true);
-    setSuccess(""); 
+    setSuccess("");
 
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = "https://bluestoneinternationalpreschool.com/api";
 
     try {
-      const res = await fetch(`${API_BASE}/api/admissions`, {
+      const res = await fetch(`${API_BASE}/admissions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -101,7 +102,7 @@ export default function Admissions() {
   const ErrorMsg = ({ field }) => (
     <AnimatePresence>
       {errors[field] && (
-        <motion.p 
+        <motion.p
           initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
           className="text-[10px] text-red-500 font-bold ml-2 uppercase tracking-tight mt-1"
         >
@@ -115,7 +116,12 @@ export default function Admissions() {
 
   return (
     <div className="overflow-x-hidden font-sans">
-      
+      <SEO
+        title="Admissions & Enrollment"
+        description="Enroll your child at Bluestone International Preschool. Follow our easy online enquiry and enrollment process for premium early education."
+        url="/admissions"
+      />
+
       {/* SUCCESS NOTIFICATION */}
       <AnimatePresence>
         {success && (
@@ -136,7 +142,7 @@ export default function Admissions() {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/95 via-purple-800/90 to-orange-500/80"></div>
 
         <div className="relative z-10 max-w-7xl w-full grid lg:grid-cols-2 gap-10 items-center">
-          
+
           {/* ENHANCED FORM CARD */}
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center lg:justify-start">
             <form onSubmit={handleSubmit} className="bg-white rounded-[2.5rem] shadow-2xl p-6 md:p-8 w-full max-w-lg border-[6px] border-yellow-400 relative">
@@ -157,7 +163,7 @@ export default function Admissions() {
                     <ErrorMsg field="phone" />
                   </div>
                 </div>
-                
+
                 <div>
                   <input type="email" name="email" placeholder="Email Address *" value={formData.email} onChange={handleChange} className={inputClass("email")} />
                   <ErrorMsg field="email" />
@@ -165,11 +171,11 @@ export default function Admissions() {
 
                 {/* --- Section: Student Info --- */}
                 <div className="pt-2 border-t border-dashed border-gray-200">
-                   <p className="text-[11px] font-bold text-purple-400 uppercase tracking-widest mb-3">Student Details</p>
-                   <div>
-                     <input type="text" name="studentName" placeholder="Student Full Name *" value={formData.studentName} onChange={handleChange} className={inputClass("studentName")} />
-                     <ErrorMsg field="studentName" />
-                   </div>
+                  <p className="text-[11px] font-bold text-purple-400 uppercase tracking-widest mb-3">Student Details</p>
+                  <div>
+                    <input type="text" name="studentName" placeholder="Student Full Name *" value={formData.studentName} onChange={handleChange} className={inputClass("studentName")} />
+                    <ErrorMsg field="studentName" />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -189,7 +195,7 @@ export default function Admissions() {
                     <ErrorMsg field="gender" />
                   </div>
                 </div>
-                
+
                 <div>
                   <select name="program" value={formData.program} onChange={handleChange} className={inputClass("program")}>
                     <option value="">Apply for Program *</option>

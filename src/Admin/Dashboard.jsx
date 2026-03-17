@@ -19,7 +19,6 @@ import { Toaster } from 'react-hot-toast';
 const NAV_ITEMS = [
   { name: "Admin Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
   { name: "Student Admissions", icon: Users, path: "/admin/dashboard/admissions" },
-  { name: "Website Enquiries", icon: MessageSquare, path: "/admin/dashboard/enquiries" },
   { name: "Franchise Form", icon: MapPin, path: "/admin/dashboard/franchise" },
   { name: "Media Management", icon: ImageIcon, path: "/admin/dashboard/media" },
 ];
@@ -44,12 +43,12 @@ export default function AdminDashboardLayout() {
       <Toaster position="top-right" toastOptions={{ duration: 1500, style: { background: '#fff', color: '#1f2937', border: '1px solid #f3f4f6', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' } }} />
       {/* Sidebar Overlay (Mobile) */}
       <AnimatePresence>
-        {!isSidebarOpen && (
+        {isSidebarOpen && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(true)}
+            onClick={() => setSidebarOpen(false)}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
           />
         )}
@@ -58,36 +57,52 @@ export default function AdminDashboardLayout() {
       {/* Sidebar */}
       <motion.aside 
         initial={false}
-        animate={{ width: isSidebarOpen ? 280 : 0 }}
-        className="relative bg-white border-r border-gray-200 z-50 flex flex-col transition-all duration-300 ease-in-out shadow-xl"
+        animate={{ 
+          width: isSidebarOpen ? 280 : 80,
+          x: 0 
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed lg:relative top-0 left-0 h-full bg-white border-r border-gray-200 z-50 flex flex-col shadow-xl overflow-hidden"
+        style={{
+          // On mobile, use x for hiding, on desktop use width for collapsing
+          x: typeof window !== 'undefined' && window.innerWidth < 1024 && !isSidebarOpen ? -280 : 0
+        }}
       >
-        <div className="p-8 flex items-center justify-between overflow-hidden whitespace-nowrap">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <span className="text-white font-black text-xl">B</span>
-            </div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-purple-800 to-orange-500 bg-clip-text text-transparent">
-              Bluestone Admin
-            </h2>
+        <div className="p-5 flex items-center gap-3 overflow-hidden">
+          <div className="flex-shrink-0 w-10 h-10 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+            <span className="text-white font-black text-xl">B</span>
           </div>
+          <motion.h2 
+            animate={{ opacity: isSidebarOpen ? 1 : 0, x: isSidebarOpen ? 0 : -20 }}
+            className="text-xl font-bold bg-gradient-to-r from-purple-800 to-orange-500 bg-clip-text text-transparent whitespace-nowrap"
+          >
+            Bluestone Admin
+          </motion.h2>
         </div>
 
-        <nav className="flex-1 px-4 mt-4 space-y-2 overflow-y-auto no-scrollbar">
+        <nav className="flex-1 px-3 mt-4 space-y-2 overflow-y-auto no-scrollbar">
           {NAV_ITEMS.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link 
                 key={item.path} 
                 to={item.path}
-                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group relative ${
+                className={`flex items-center gap-4 px-3.5 py-3.5 rounded-2xl transition-all group relative ${
                   isActive 
                     ? "bg-orange-500 text-white shadow-lg shadow-orange-500/20" 
                     : "hover:bg-gray-100 text-gray-600 hover:text-gray-900"
                 }`}
               >
-                <item.icon size={22} className={isActive ? "text-white" : "group-hover:text-orange-500 transition-colors"} />
-                <span className="font-medium whitespace-nowrap">{item.name}</span>
-                {isActive && (
+                <div className="flex-shrink-0">
+                  <item.icon size={22} className={isActive ? "text-white" : "group-hover:text-orange-500 transition-colors"} />
+                </div>
+                <motion.span 
+                  animate={{ opacity: isSidebarOpen ? 1 : 0, x: isSidebarOpen ? 0 : -10 }}
+                  className="font-medium whitespace-nowrap"
+                >
+                  {item.name}
+                </motion.span>
+                {isActive && isSidebarOpen && (
                   <motion.div 
                     layoutId="active-pill"
                     className="absolute right-3 w-1.5 h-1.5 rounded-full bg-white"
@@ -98,13 +113,20 @@ export default function AdminDashboardLayout() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-3 border-t border-gray-100 mb-2">
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-4 w-full px-4 py-4 rounded-2xl text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all group"
+            className="flex items-center gap-4 w-full px-3.5 py-4 rounded-2xl text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all group"
           >
-            <LogOut size={22} className="group-hover:rotate-12 transition-transform" />
-            <span className="font-medium">Logout</span>
+            <div className="flex-shrink-0">
+              <LogOut size={22} className="group-hover:rotate-12 transition-transform" />
+            </div>
+            <motion.span 
+              animate={{ opacity: isSidebarOpen ? 1 : 0, x: isSidebarOpen ? 0 : -10 }}
+              className="font-medium whitespace-nowrap"
+            >
+              Logout
+            </motion.span>
           </button>
         </div>
       </motion.aside>

@@ -143,11 +143,10 @@ export default function Franchise() {
     setIsSubmitting(true);
     setSuccess("");
 
-    const API_BASE =
-      import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = "https://bluestoneinternationalpreschool.com/api";
 
     try {
-      const response = await fetch(`${API_BASE}/api/franchise`, {
+      const response = await fetch(`${API_BASE}/franchise`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formValues),

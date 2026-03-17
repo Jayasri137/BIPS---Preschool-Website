@@ -40,56 +40,33 @@ export default function MediaManagement() {
       const reader = new FileReader();
       reader.addEventListener('load', () => setCropImageSrc(reader.result?.toString() || ''));
       reader.readAsDataURL(e.target.files[0]);
-      setEditingImageId(null);
       setCropModalOpen(true);
     }
   };
 
   const handleCropComplete = async (croppedBlob) => {
-    if (editingImageId) {
-      // Handle Edit (PUT)
-      setUploading(true);
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-      const token = localStorage.getItem("admin_token");
-
-      const formData = new FormData();
-      formData.append("image", croppedBlob, "edited.webp");
-
-      try {
-        const res = await fetch(`${API_BASE}/api/admin/media/${editingImageId}`, {
-          method: "PUT",
-          headers: { "Authorization": `Bearer ${token}` },
-          body: formData
-        });
-        if (res.ok) {
-          fetchMedia();
-          toast.success("Image updated successfully!");
-        } else {
-          toast.error("Failed to update image");
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("An error occurred");
-      } finally {
-        setUploading(false);
-      }
-    } else {
-      // Handle New Upload File Setting
-      // Provide a filename to the blob so it acts like a File
-      const fileObj = new File([croppedBlob], "cropped.webp", { type: "image/webp" });
-      setFile(fileObj);
-    }
+    // Provide a filename to the blob so it acts like a File
+    const fileObj = new File([croppedBlob], "cropped.webp", { type: "image/webp" });
+    setFile(fileObj);
   };
 
   const triggerEdit = (img) => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
-    const src = img.image_url?.startsWith('data:image') || img.image_url?.startsWith('http')
-      ? img.image_url
-      : `${API_BASE}${img.image_url}`;
-
-    setCropImageSrc(src);
     setEditingImageId(img.id);
-    setCropModalOpen(true);
+    setTargetPage(img.page_name);
+    setTargetSection(img.section_name);
+    setAltText(img.image_alt || "");
+    setFile(null); // Reset file so user can choose to upload new or keep old
+
+    // Scroll to the upload form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const resetForm = () => {
+    setEditingImageId(null);
+    setTargetPage("Home");
+    setTargetSection("Hero_Main");
+    setAltText("");
+    setFile(null);
   };
 
   useEffect(() => {
@@ -97,17 +74,17 @@ export default function MediaManagement() {
   }, []);
 
   const fetchMedia = async () => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/media`, {
+      const res = await fetch(`${API_BASE}/admin/media`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
       if (Array.isArray(data)) setMedia(data);
     } catch (err) {
-      console.error(err);
+      // Error fetching media
     } finally {
       setLoading(false);
     }
@@ -115,37 +92,39 @@ export default function MediaManagement() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file) return;
-
     setUploading(true);
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
 
     const formData = new FormData();
-    formData.append("image", file);
+    if (file) formData.append("image", file);
     formData.append("page_name", targetPage);
     formData.append("section_name", targetSection);
     formData.append("image_alt", altText);
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/media/upload`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        },
+      const url = editingImageId
+        ? `${API_BASE}/admin/media/${editingImageId}`
+        : `${API_BASE}/admin/media/upload`;
+
+      const method = editingImageId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method: method,
+        headers: { "Authorization": `Bearer ${token}` },
         body: formData
       });
 
       if (res.ok) {
-        setFile(null);
-        setAltText("");
+        resetForm();
         fetchMedia();
-        toast.success("Image uploaded successfully!");
+        toast.success(editingImageId ? "Image updated successfully!" : "Image uploaded successfully!");
       } else {
-        toast.error("Failed to upload image");
+        toast.error(editingImageId ? "Failed to update image" : "Failed to upload image");
       }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       toast.error("An error occurred");
     } finally {
       setUploading(false);
@@ -154,11 +133,11 @@ export default function MediaManagement() {
 
   const performDelete = async (id, toastId) => {
     if (toastId) toast.dismiss(toastId);
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/media/${id}`, {
+      const res = await fetch(`${API_BASE}/admin/media/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -170,9 +149,72 @@ export default function MediaManagement() {
         toast.error("Failed to delete image", { duration: 1500 });
       }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       toast.error("An error occurred while deleting", { duration: 1500 });
     }
+  };
+
+  const performStatusUpdate = async (img, newStatus, toastId) => {
+    if (toastId) toast.dismiss(toastId);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+    const token = localStorage.getItem("admin_token");
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/status/media/${img.id}`, {
+        method: "PUT",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (res.ok) {
+        fetchMedia();
+        toast.success(`Image set to ${newStatus === 1 ? 'Active' : 'Inactive'}`);
+      } else {
+        toast.error("Failed to update status");
+      }
+    } catch (err) {
+      // console.error(err);
+      toast.error("An error occurred");
+    }
+  };
+
+  const toggleStatus = (img) => {
+    const newStatus = img.status === 1 ? 0 : 1;
+    toast((t) => (
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold text-gray-900">
+          Change status to <span className={newStatus === 1 ? "text-green-600" : "text-red-600"}>
+            {newStatus === 1 ? 'Active' : 'Inactive'}
+          </span>?
+        </p>
+        <div className="flex gap-2 justify-end mt-1">
+          <button
+            onClick={() => performStatusUpdate(img, newStatus, t.id)}
+            className={`px-3 py-1.5 text-white text-xs font-bold rounded-lg transition-all shadow-sm ${newStatus === 1 ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+              }`}
+          >
+            Confirm
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200 transition-all"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 4000,
+      position: 'top-center',
+      style: {
+        background: '#fff',
+        border: '1px solid #e5e7eb',
+        padding: '12px'
+      }
+    });
   };
 
   const handleDelete = (id) => {
@@ -287,13 +329,25 @@ export default function MediaManagement() {
               </div>
             </div>
 
-            <button
-              type="submit"
-              disabled={uploading || !file}
-              className="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-orange-600/20 flex items-center justify-center gap-2 disabled:opacity-50"
-            >
-              {uploading ? <Loader2 className="animate-spin" size={20} /> : "Upload Image"}
-            </button>
+            <div className="flex flex-col gap-3">
+              <button
+                type="submit"
+                disabled={uploading || (!file && !editingImageId)}
+                className={`w-full ${editingImageId ? 'bg-blue-600 hover:bg-blue-500 shadow-blue-600/20' : 'bg-orange-600 hover:bg-orange-500 shadow-orange-600/20'} text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 disabled:opacity-50`}
+              >
+                {uploading ? <Loader2 className="animate-spin" size={20} /> : (editingImageId ? "Update Media" : "Upload Image")}
+              </button>
+
+              {editingImageId && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-4 rounded-2xl transition-all flex items-center justify-center gap-2"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
           </form>
         </div>
 
@@ -303,8 +357,8 @@ export default function MediaManagement() {
             <button
               onClick={() => setSelectedPage("All")}
               className={`px-5 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${selectedPage === "All"
-                  ? "bg-orange-600 text-white shadow-lg shadow-orange-600/20"
-                  : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                ? "bg-orange-600 text-white shadow-lg shadow-orange-600/20"
+                : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                 }`}
             >
               All Media
@@ -314,8 +368,8 @@ export default function MediaManagement() {
                 key={p}
                 onClick={() => setSelectedPage(p)}
                 className={`px-5 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap ${selectedPage === p
-                    ? "bg-orange-600 text-white shadow-lg shadow-orange-600/20"
-                    : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                  ? "bg-orange-600 text-white shadow-lg shadow-orange-600/20"
+                  : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                   }`}
               >
                 {p}
@@ -343,7 +397,7 @@ export default function MediaManagement() {
               >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
-                    src={img.image_url?.startsWith('data:image') || img.image_url?.startsWith('http') ? img.image_url : `${import.meta.env.VITE_API_BASE_URL || "http://localhost:5000"}${img.image_url}`}
+                    src={img.image_url?.startsWith('data:image') || img.image_url?.startsWith('http') ? img.image_url : `${import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com"}${img.image_url}`}
                     alt={img.image_alt}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
@@ -353,19 +407,32 @@ export default function MediaManagement() {
                     <p className="text-xs font-bold text-gray-900 uppercase tracking-tighter">{img.page_name} - {img.section_name?.replace(/_/g, ' ')}</p>
                     <p className="text-[10px] text-gray-500 truncate max-w-[150px]">{img.image_alt || "No descriptor"}</p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <button
-                      onClick={() => triggerEdit(img)}
-                      className="p-2 bg-blue-500/10 text-blue-500 rounded-xl hover:bg-blue-500 hover:text-white transition-all shadow-lg opacity-0 group-hover:opacity-100"
+                      onClick={() => toggleStatus(img)}
+                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all shadow-sm ${img.status === 1
+                          ? "bg-green-100 text-green-700 border border-green-200 hover:bg-green-200"
+                          : "bg-red-100 text-red-700 border border-red-200 hover:bg-red-200"
+                        }`}
                     >
-                      <Edit2 size={16} />
+                      {img.status === 1 ? "Active" : "Inactive"}
                     </button>
-                    <button
-                      onClick={() => handleDelete(img.id)}
-                      className="p-2 bg-red-500/10 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-lg opacity-0 group-hover:opacity-100"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => triggerEdit(img)}
+                        className="p-1.5 bg-blue-50/50 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        title="Edit"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(img.id)}
+                        className="p-1.5 bg-red-50/50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
+                        title="Delete"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </motion.div>

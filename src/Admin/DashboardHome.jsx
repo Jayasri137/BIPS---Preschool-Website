@@ -6,7 +6,6 @@ import toast from 'react-hot-toast';
 export default function DashboardHome() {
   const [stats, setStats] = useState({
     admissions: 0,
-    enquiries: 0,
     franchise: 0,
     media: 0
   });
@@ -17,27 +16,24 @@ export default function DashboardHome() {
   }, []);
 
   const fetchStats = async () => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
     const headers = { "Authorization": `Bearer ${token}` };
 
     try {
-      const [adm, enq, fra, med] = await Promise.all([
-        fetch(`${API_BASE}/api/admin/admissions`, { headers }).then(res => res.json()),
-        fetch(`${API_BASE}/api/admin/enquiries`, { headers }).then(res => res.json()),
-        fetch(`${API_BASE}/api/admin/franchise`, { headers }).then(res => res.json()),
-        fetch(`${API_BASE}/api/admin/media`, { headers }).then(res => res.json()),
+      const [adm, fra, med] = await Promise.all([
+        fetch(`${API_BASE}/admin/admissions`, { headers }).then(res => res.json()),
+        fetch(`${API_BASE}/admin/franchise`, { headers }).then(res => res.json()),
+        fetch(`${API_BASE}/admin/media`, { headers }).then(res => res.json()),
       ]);
 
       setStats({
         admissions: Array.isArray(adm) ? adm.length : 0,
-        enquiries: Array.isArray(enq) ? enq.length : 0,
         franchise: Array.isArray(fra) ? fra.length : 0,
         media: Array.isArray(med) ? med.length : 0,
       });
     } catch (err) {
-      console.error("Error fetching stats:", err);
-      toast.error("Failed to load dashboard statistics");
+      // toast.error("Failed to load dashboard statistics");
     } finally {
       setLoading(false);
     }
@@ -45,7 +41,6 @@ export default function DashboardHome() {
 
   const CARDS = [
     { name: "Total Admissions", value: stats.admissions, Icon: Users, color: "bg-blue-500", shadow: "shadow-blue-500/20" },
-    { name: "General Enquiries", value: stats.enquiries, Icon: MessageSquare, color: "bg-green-500", shadow: "shadow-green-500/20" },
     { name: "Franchise Requests", value: stats.franchise, Icon: MapPin, color: "bg-purple-500", shadow: "shadow-purple-500/20" },
     { name: "Media Assets", value: stats.media, Icon: ImageIcon, color: "bg-orange-500", shadow: "shadow-orange-500/20" },
   ];
@@ -59,7 +54,7 @@ export default function DashboardHome() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {CARDS.map((card, i) => (
-          <motion.div 
+          <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -87,7 +82,7 @@ export default function DashboardHome() {
             </h3>
             <span className="text-xs bg-orange-50 text-orange-600 px-3 py-1 rounded-full font-bold border border-orange-100">Live Updates</span>
           </div>
-          
+
           <div className="space-y-4">
             {[1, 2, 3].map((_, i) => (
               <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100 hover:border-gray-200 transition-all">
@@ -113,7 +108,7 @@ export default function DashboardHome() {
             </p>
           </div>
           <button className="w-full py-4 mt-8 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-2xl font-bold text-sm transition-all border border-white/20">
-             Explore Documentation
+            Explore Documentation
           </button>
         </div>
       </div>

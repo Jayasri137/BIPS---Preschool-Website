@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
-export default function Programs() {
+export default function Programs({ showSEO = false }) {
   const navigate = useNavigate();
   const { getSectionImage } = useMedia("Programs");
 
@@ -54,7 +55,7 @@ export default function Programs() {
   useEffect(() => {
     const updateCards = () => {
       if (window.innerWidth < 540) setCardsPerView(1);      // mobile
-      else if (window.innerWidth < 780) setCardsPerView(2); 
+      else if (window.innerWidth < 780) setCardsPerView(2);
       else if (window.innerWidth < 1200) setCardsPerView(3);// tablet
       else setCardsPerView(4);                              // desktop
     };
@@ -73,6 +74,13 @@ export default function Programs() {
 
   return (
     <section className="py-20 bg-white">
+      {showSEO && (
+        <SEO
+          title="Our Programs"
+          description="Explore our specialized early childhood programs: Nestlers, Bambino, B Junior, and B Senior, designed for holistic development."
+          url="/program"
+        />
+      )}
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Heading */}
@@ -131,19 +139,19 @@ export default function Programs() {
                     className="w-full h-56 object-cover
                                group-hover:scale-110 transition duration-500"
                   />
-                 {/* Arrow */}
-        
-  <motion.button
-            whileHover={{ scale: 1.20 }}
-            whileTap={{ scale: 0.95 }}
-           onClick={() => navigate(item.link)}   
-            className={`absolute right-4 top-4 lg:top-7/8 translate-y-1
+                  {/* Arrow */}
+
+                  <motion.button
+                    whileHover={{ scale: 1.20 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate(item.link)}
+                    className={`absolute right-4 top-4 lg:top-7/8 translate-y-1
               w-12 h-12 rounded-full ${item.arrowColor}
               flex items-center justify-center cursor-pointer
               text-white text-xl font-bold shadow-lg`}
-          >
-            →
-          </motion.button>
+                  >
+                    →
+                  </motion.button>
                 </div>
 
                 {/* Content */}

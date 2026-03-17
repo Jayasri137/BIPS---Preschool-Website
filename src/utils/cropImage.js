@@ -28,6 +28,7 @@ export function rotateSize(width, height, rotation) {
 
 /**
  * This function was adapted from the one in the ReadMe of https://github.com/DominicTobias/react-image-crop
+ * v2-safety-fix
  */
 export default async function getCroppedImg(
   imageSrc,
@@ -64,8 +65,15 @@ export default async function getCroppedImg(
   // draw rotated image
   ctx.drawImage(image, 0, 0)
 
+  // Safety check for pixelCrop - MUST have non-zero dimensions
+  if (!pixelCrop || pixelCrop.width <= 0 || pixelCrop.height <= 0) {
+    // console.error('getCroppedImg: Invalid dimensions provided', pixelCrop)
+    throw new Error(`Invalid crop dimensions: ${pixelCrop?.width}x${pixelCrop?.height}`)
+  }
+
   // croppedAreaPixels values are bounding box relative
   // extract the cropped image using these values
+  // console.log('getCroppedImg: Extracting data with', pixelCrop)
   const data = ctx.getImageData(
     pixelCrop.x,
     pixelCrop.y,
@@ -84,6 +92,10 @@ export default async function getCroppedImg(
   return new Promise((resolve, reject) => {
     // try to get native blob to allow image/webp
     canvas.toBlob((file) => {
+      if (!file) {
+        reject(new Error('Canvas is empty'))
+        return
+      }
       resolve(file)
     }, 'image/webp')
   })

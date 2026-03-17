@@ -23,44 +23,44 @@ export default function FranchiseDashboard() {
   }, []);
 
   const fetchEnquiries = async () => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/franchise`, {
+      const res = await fetch(`${API_BASE}/admin/franchise`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
       if (Array.isArray(data)) setEnquiries(data);
     } catch (err) {
-      console.error(err);
+      // Error fetching enquiries
     } finally {
       setLoading(false);
     }
   };
 
   const fetchRecordHistory = async (id, name) => {
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
     setSelectedRecordName(name);
     try {
-      const res = await fetch(`${API_BASE}/api/admin/history/FRANCHISE/${id}`, {
+      const res = await fetch(`${API_BASE}/admin/history/FRANCHISE/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
       setHistoryLogs(data);
       setShowHistoryModal(true);
     } catch (err) {
-      console.error(err);
+      // Error fetching history
     }
   };
 
   const performDelete = async (id, toastId) => {
     if (toastId) toast.dismiss(toastId);
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(`${API_BASE}/api/admin/franchise/${id}`, {
+      const res = await fetch(`${API_BASE}/admin/franchise/${id}`, {
         method: 'DELETE',
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -71,7 +71,7 @@ export default function FranchiseDashboard() {
         toast.error("Failed to delete enquiry", { duration: 1500 });
       }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       toast.error("An error occurred", { duration: 1500 });
     }
   };
@@ -81,22 +81,22 @@ export default function FranchiseDashboard() {
       <div className="flex flex-col gap-2">
         <p className="text-sm font-semibold text-gray-900">Are you sure you want to delete this franchise inquiry?</p>
         <div className="flex gap-2 justify-end mt-1">
-          <button 
-            onClick={() => performDelete(id, t.id)} 
+          <button
+            onClick={() => performDelete(id, t.id)}
             className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-all shadow-sm"
           >
             Delete
           </button>
-          <button 
-            onClick={() => toast.dismiss(t.id)} 
+          <button
+            onClick={() => toast.dismiss(t.id)}
             className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200 transition-all"
           >
             Cancel
           </button>
         </div>
       </div>
-    ), { 
-      duration: 3000, 
+    ), {
+      duration: 3000,
       position: 'top-center',
       style: {
         background: '#fee2e2',
@@ -106,39 +106,75 @@ export default function FranchiseDashboard() {
     });
   };
 
-  const toggleStatus = async (item) => {
-    const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+  const performStatusUpdate = async (item, newStatus, toastId) => {
+    if (toastId) toast.dismiss(toastId);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(`${API_BASE}/api/admin/franchise/${item.id}`, {
+      const res = await fetch(`${API_BASE}/admin/status/franchise/${item.id}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ ...item, status: newStatus })
+        body: JSON.stringify({ status: newStatus })
       });
       if (res.ok) {
         fetchEnquiries();
-        toast.success(`Status changed to ${newStatus}`);
+        toast.success(`Status changed to ${newStatus === 1 ? 'Active' : 'Inactive'}`);
       } else {
         toast.error("Failed to alter status");
       }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       toast.error("An error occurred");
     }
   };
 
+  const toggleStatus = (item) => {
+    const newStatus = item.status === 1 ? 0 : 1;
+    toast((t) => (
+      <div className="flex flex-col gap-2">
+        <p className="text-sm font-semibold text-gray-900">
+          Change status to <span className={newStatus === 1 ? "text-green-600" : "text-red-600"}>
+            {newStatus === 1 ? 'Active' : 'Inactive'}
+          </span>?
+        </p>
+        <div className="flex gap-2 justify-end mt-1">
+          <button
+            onClick={() => performStatusUpdate(item, newStatus, t.id)}
+            className={`px-3 py-1.5 text-white text-xs font-bold rounded-lg transition-all shadow-sm ${newStatus === 1 ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+              }`}
+          >
+            Confirm
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1.5 bg-gray-100 text-gray-700 text-xs font-bold rounded-lg hover:bg-gray-200 transition-all"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 4000,
+      position: 'top-center',
+      style: {
+        background: '#fff',
+        border: '1px solid #e5e7eb',
+        padding: '12px'
+      }
+    });
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
     try {
-      const res = await fetch(`${API_BASE}/api/admin/franchise/${editingItem.id}`, {
+      const res = await fetch(`${API_BASE}/admin/franchise/${editingItem.id}`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
@@ -152,13 +188,13 @@ export default function FranchiseDashboard() {
         toast.error("Failed to update enquiry");
       }
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       toast.error("An error occurred");
     }
   };
 
   // Filter and Pagination Logic
-  const filteredData = enquiries.filter(item => 
+  const filteredData = enquiries.filter(item =>
     item.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.city?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -184,8 +220,8 @@ export default function FranchiseDashboard() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-gray-200 shadow-sm">
             <span className="text-xs text-gray-500 font-bold uppercase whitespace-nowrap">Show:</span>
-            <select 
-              value={itemsPerPage} 
+            <select
+              value={itemsPerPage}
               onChange={(e) => {
                 setItemsPerPage(e.target.value === 'all' ? 'all' : Number(e.target.value));
                 setCurrentPage(1);
@@ -206,9 +242,9 @@ export default function FranchiseDashboard() {
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-            <input 
-              type="text" 
-              placeholder="Search partners..." 
+            <input
+              type="text"
+              placeholder="Search partners..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -219,7 +255,7 @@ export default function FranchiseDashboard() {
           </div>
         </div>
 
-        <div 
+        <div
           className="overflow-x-auto relative"
           style={{ maxHeight: itemsPerPage > 10 || itemsPerPage === 'all' ? '70vh' : 'auto' }}
         >
@@ -248,7 +284,7 @@ export default function FranchiseDashboard() {
                   <td colSpan="5" className="px-6 py-20 text-center text-gray-500 italic">No partners found.</td>
                 </tr>
               ) : currentItems.map((item) => (
-                <motion.tr 
+                <motion.tr
                   key={item.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -256,9 +292,8 @@ export default function FranchiseDashboard() {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${
-                        item.status === 'active' ? 'bg-purple-100 text-purple-600' : 'bg-gray-200 text-gray-600'
-                      }`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${item.status === 1 ? 'bg-purple-100 text-purple-600' : 'bg-gray-200 text-gray-600'
+                        }`}>
                         <Building2 size={20} />
                       </div>
                       <div>
@@ -280,26 +315,23 @@ export default function FranchiseDashboard() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                       <button 
+                      <button
                         onClick={() => toggleStatus(item)}
-                        className={`relative w-8 h-4 rounded-full transition-all p-0.5 flex items-center ${
-                          item.status === 'active' ? 'bg-green-100' : 'bg-gray-300'
-                        }`}
+                        className={`relative w-8 h-4 rounded-full transition-all p-0.5 flex items-center ${item.status === 1 ? 'bg-green-100' : 'bg-red-100'
+                          }`}
                       >
-                        <div className={`w-3 h-3 rounded-full transition-all shadow-sm ${
-                          item.status === 'active' ? 'bg-green-500 ml-4' : 'bg-white ml-0'
-                        }`} />
+                        <div className={`w-3 h-3 rounded-full transition-all shadow-sm ${item.status === 1 ? 'bg-green-500 ml-4' : 'bg-red-500 ml-0'
+                          }`} />
                       </button>
-                      <span className={`text-[10px] font-black uppercase tracking-tighter ${
-                        item.status === 'active' ? 'text-green-600' : 'text-gray-500'
-                      }`}>
-                        {item.status || 'active'}
+                      <span className={`text-[10px] font-black uppercase tracking-tighter ${item.status === 1 ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                        {item.status === 1 ? 'Active' : 'Inactive'}
                       </span>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                       <button 
+                      <button
                         onClick={() => {
                           setEditingItem(item);
                           setShowEditModal(true);
@@ -309,14 +341,14 @@ export default function FranchiseDashboard() {
                       >
                         <Pencil size={18} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(item.id)}
                         className="p-2 rounded-xl hover:bg-red-50 text-red-600 transition-all"
                         title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => fetchRecordHistory(item.id, item.fullName)}
                         className="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-all"
                         title="View History"
@@ -338,31 +370,30 @@ export default function FranchiseDashboard() {
               Showing <span className="text-gray-900 font-bold">{indexOfFirstItem + 1}</span> to <span className="text-gray-900 font-bold">{Math.min(indexOfLastItem, filteredData.length)}</span> of <span className="text-gray-900 font-bold">{filteredData.length}</span> entries
             </p>
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
               >
                 <ChevronLeft size={18} />
               </button>
-              
+
               <div className="flex items-center gap-1">
                 {[...Array(totalPages)].map((_, i) => (
                   <button
                     key={i + 1}
                     onClick={() => handlePageChange(i + 1)}
-                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all shadow-sm ${
-                      currentPage === i + 1 
-                      ? "bg-purple-600 text-white" 
-                      : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50"
-                    }`}
+                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all shadow-sm ${currentPage === i + 1
+                        ? "bg-purple-600 text-white"
+                        : "bg-white border border-gray-200 text-gray-500 hover:bg-gray-50"
+                      }`}
                   >
                     {i + 1}
                   </button>
                 ))}
               </div>
 
-              <button 
+              <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="p-2 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-gray-500 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
@@ -377,7 +408,7 @@ export default function FranchiseDashboard() {
       <AnimatePresence>
         {showEditModal && (
           <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -390,58 +421,58 @@ export default function FranchiseDashboard() {
               <form onSubmit={handleUpdate} className="space-y-4">
                 <div className="space-y-2">
                   <label className="text-xs text-gray-500 font-bold uppercase">Full Name</label>
-                  <input 
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50" 
-                    value={editingItem.fullName} 
-                    onChange={e => setEditingItem({...editingItem, fullName: e.target.value})}
+                  <input
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50"
+                    value={editingItem.fullName}
+                    onChange={e => setEditingItem({ ...editingItem, fullName: e.target.value })}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs text-gray-500 font-bold uppercase">Email</label>
-                    <input 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50" 
-                      value={editingItem.email} 
-                      onChange={e => setEditingItem({...editingItem, email: e.target.value})}
+                    <input
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50"
+                      value={editingItem.email}
+                      onChange={e => setEditingItem({ ...editingItem, email: e.target.value })}
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs text-gray-500 font-bold uppercase">Phone</label>
-                    <input 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50" 
-                      value={editingItem.phone} 
-                      onChange={e => setEditingItem({...editingItem, phone: e.target.value})}
+                    <input
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50"
+                      value={editingItem.phone}
+                      onChange={e => setEditingItem({ ...editingItem, phone: e.target.value })}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="text-xs text-gray-500 font-bold uppercase">City</label>
-                    <input 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50" 
-                      value={editingItem.city} 
-                      onChange={e => setEditingItem({...editingItem, city: e.target.value})}
+                    <input
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50"
+                      value={editingItem.city}
+                      onChange={e => setEditingItem({ ...editingItem, city: e.target.value })}
                     />
                   </div>
-                   <div className="space-y-2">
+                  <div className="space-y-2">
                     <label className="text-xs text-gray-500 font-bold uppercase">Status</label>
-                    <select 
-                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none cursor-pointer focus:border-purple-500/50"
-                      value={editingItem.status || 'active'}
-                      onChange={e => setEditingItem({...editingItem, status: e.target.value})}
+                    <select
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none cursor-pointer focus:border-orange-500/50"
+                      value={editingItem.status ?? 1}
+                      onChange={e => setEditingItem({ ...editingItem, status: Number(e.target.value) })}
                     >
-                      <option value="active" className="bg-white">Active</option>
-                      <option value="inactive" className="bg-white">Inactive</option>
+                      <option value={1} className="bg-white">Active</option>
+                      <option value={0} className="bg-white">Inactive</option>
                     </select>
                   </div>
                 </div>
                 <div className="space-y-2">
-                   <label className="text-xs text-gray-500 font-bold uppercase">Message</label>
-                   <textarea 
+                  <label className="text-xs text-gray-500 font-bold uppercase">Message</label>
+                  <textarea
                     rows="3"
-                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50 resize-none" 
-                    value={editingItem.message} 
-                    onChange={e => setEditingItem({...editingItem, message: e.target.value})}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-purple-500/50 resize-none"
+                    value={editingItem.message}
+                    onChange={e => setEditingItem({ ...editingItem, message: e.target.value })}
                   />
                 </div>
                 <div className="flex gap-3 mt-4">
@@ -455,7 +486,7 @@ export default function FranchiseDashboard() {
 
         {showHistoryModal && (
           <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -477,37 +508,36 @@ export default function FranchiseDashboard() {
                     <div className="absolute left-[-5px] top-0 w-2.5 h-2.5 rounded-full bg-purple-500 shadow-md shadow-purple-500/30" />
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between">
-                         <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase ${
-                           log.action_type === 'DELETE' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
-                         }`}>
+                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-md uppercase ${log.action_type === 'DELETE' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
+                          }`}>
                           {log.action_type}
                         </span>
                         <span className="text-[10px] text-gray-500 flex items-center gap-1">
                           <Clock size={10} /> {new Date(log.created_at).toLocaleString()}
                         </span>
                       </div>
-                      
+
                       <div className="text-xs text-gray-600 mt-1">
                         {log.details.startsWith('Changed: ') ? (
                           <div className="space-y-2 mt-2">
-                             <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Detailed Changes:</p>
-                             {log.details.replace('Changed: ', '').split(', ').map((change, idx) => {
-                               const parts = change.split(': ');
-                               if (parts.length < 2) return <li key={idx} className="text-[11px] list-disc ml-2">{change}</li>;
-                               const field = parts[0];
-                               const values = parts[1];
-                               const [oldVal, newVal] = values.split(' ➔ ');
-                               return (
-                                 <div key={idx} className="bg-gray-50 rounded-lg p-2 border border-gray-200">
-                                   <p className="text-[10px] text-orange-600 font-bold uppercase mb-1">{field.replace(/([A-Z])/g, ' $1')}</p>
-                                   <div className="flex items-center gap-2 text-[11px]">
-                                     <span className="text-gray-400 line-through">{oldVal?.replace(/'/g, '') || 'N/A'}</span>
-                                     <span className="text-gray-400">➔</span>
-                                     <span className="text-green-600 font-medium">{newVal?.replace(/'/g, '') || 'N/A'}</span>
-                                   </div>
-                                 </div>
-                               );
-                             })}
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Detailed Changes:</p>
+                            {log.details.replace('Changed: ', '').split(', ').map((change, idx) => {
+                              const parts = change.split(': ');
+                              if (parts.length < 2) return <li key={idx} className="text-[11px] list-disc ml-2">{change}</li>;
+                              const field = parts[0];
+                              const values = parts[1];
+                              const [oldVal, newVal] = values.split(' ➔ ');
+                              return (
+                                <div key={idx} className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                                  <p className="text-[10px] text-orange-600 font-bold uppercase mb-1">{field.replace(/([A-Z])/g, ' $1')}</p>
+                                  <div className="flex items-center gap-2 text-[11px]">
+                                    <span className="text-gray-400 line-through">{oldVal?.replace(/'/g, '') || 'N/A'}</span>
+                                    <span className="text-gray-400">➔</span>
+                                    <span className="text-green-600 font-medium">{newVal?.replace(/'/g, '') || 'N/A'}</span>
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         ) : (
                           <p className="py-1">{log.details}</p>
@@ -522,8 +552,8 @@ export default function FranchiseDashboard() {
                 ))}
               </div>
 
-              <button 
-                onClick={() => setShowHistoryModal(false)} 
+              <button
+                onClick={() => setShowHistoryModal(false)}
                 className="w-full mt-6 bg-gray-100 hover:bg-gray-200 border border-gray-200 py-3 rounded-xl font-bold text-sm text-gray-600 transition-all"
               >
                 Close History

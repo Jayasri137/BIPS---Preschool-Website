@@ -1,5 +1,6 @@
-import { motion } from "framer-motion";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
+import { motion } from "framer-motion";
 
 export default function AboutBluestone() {
   const { getSectionImage, media } = useMedia("About_Us");
@@ -11,6 +12,11 @@ export default function AboutBluestone() {
   const galleryImages = media["General"]?.map(img => img.image_url) || [];
   return (
     <main className="bg-white overflow-hidden">
+      <SEO
+        title="About Our Campus"
+        description="Explore Bluestone International Preschool's world-class facilities, meet our leadership, and see our nurturing learning environment."
+        url="/about-bluestone"
+      />
       {/* ================= HERO ================= */}
       <section className="relative min-h-[85vh] flex items-start justify-center overflow-hidden pt-24 md:pt-38 px-4 sm:px-6 lg:px-8 bg-purple-900">
         {/* BACKGROUND IMAGE - Eagerly loaded for LCP */}

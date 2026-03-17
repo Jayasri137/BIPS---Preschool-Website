@@ -8,7 +8,8 @@ import {
   MessageCircle,
   Clock,
 } from "lucide-react";
-import { BLOG_POSTS } from "./data"; // 1. Import your actual data
+import { BLOG_POSTS } from "./data";
+import SEO from "../../SEO";
 
 export default function BlogPost() {
   const { slug } = useParams();
@@ -30,7 +31,7 @@ export default function BlogPost() {
     if (navigator.share) {
       navigator
         .share(shareData)
-        .catch((err) => console.log("Error sharing", err));
+        .catch((err) => { /* share error */ });
     } else {
       // Fallback: Open WhatsApp with the link
       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
@@ -70,6 +71,12 @@ export default function BlogPost() {
 
   return (
     <div className="bg-white min-h-screen pb-20">
+      <SEO
+        title={post.title}
+        description={post.summary || `Read our latest blog post about ${post.title} by ${post.author}.`}
+        image={post.image}
+        url={`/blogs/${post.slug}`}
+      />
       <motion.div
         className="fixed top-0 left-0 right-0 h-1.5 bg-orange-500 z-[60] origin-left"
         style={{ scaleX }}

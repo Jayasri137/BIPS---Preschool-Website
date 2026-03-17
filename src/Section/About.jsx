@@ -1,17 +1,25 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
-export default function About() {
-    const navigate = useNavigate();
-    const { getSectionImage } = useMedia("About");
+export default function About({ showSEO = false }) {
+  const navigate = useNavigate();
+  const { getSectionImage } = useMedia("About");
 
-    const dynamicMain = getSectionImage("Main_Graphic");
-    const dynamicSmall1 = getSectionImage("Vision_Banner"); // Reusing for small circle 1
-    const dynamicSmall2 = getSectionImage("Director_Image"); // Reusing for small circle 2
-    
+  const dynamicMain = getSectionImage("Main_Graphic");
+  const dynamicSmall1 = getSectionImage("Vision_Banner"); // Reusing for small circle 1
+  const dynamicSmall2 = getSectionImage("Director_Image"); // Reusing for small circle 2
+
   return (
-   <section className="py-24 bg-[#FFF7ED] overflow-hidden">
+    <section className="py-24 bg-[#FFF7ED] overflow-hidden">
+      {showSEO && (
+        <SEO
+          title="About Us"
+          description="Learn about Bluestone International Preschool's mission, vision, and our commitment to providing premium early childhood education."
+          url="/about"
+        />
+      )}
       <div className="max-w-7xl mx-auto justify-center text-center px-8 grid lg:grid-cols-2 lg:text-left gap-16 items-center">
 
         {/* LEFT CONTENT */}
@@ -38,8 +46,8 @@ export default function About() {
             academically, socially, and emotionally in a safe and nurturing
             environment.
           </p>
-          
-        <motion.button
+
+          <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/about-bluestone")}
@@ -113,8 +121,8 @@ export default function About() {
                 height: "12%",
                 bottom: "5%",
                 right: "12%",
-                  background:
-          "radial-gradient(circle at 30% 30%, #FDBA74, #F97316)",
+                background:
+                  "radial-gradient(circle at 30% 30%, #FDBA74, #F97316)",
               }}
             />
 
@@ -126,8 +134,8 @@ export default function About() {
                 height: "8%",
                 top: "28%",
                 right: "-2%",
-                  background:
-          "radial-gradient(circle at 30% 30%, #FDBA74, #F97316)",
+                background:
+                  "radial-gradient(circle at 30% 30%, #FDBA74, #F97316)",
               }}
             />
           </div>

@@ -67,7 +67,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <Link to="/">
-            <img src={logo} alt="Bluestone Preschool" className="h-40 w-40" />
+            <img src={logo} alt="Bluestone Preschool" className="h-25 w-40" />
           </Link>
 
           {/* ================= DESKTOP MENU ================= */}

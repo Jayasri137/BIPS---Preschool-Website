@@ -39,7 +39,6 @@ import AdminLogin from "./Admin/Login";
 import AdminDashboardLayout from "./Admin/Dashboard";
 import DashboardHome from "./Admin/DashboardHome";
 import AdmissionsDashboard from "./Admin/Admissions";
-import EnquiriesDashboard from "./Admin/Enquiries";
 import FranchiseDashboard from "./Admin/Franchise";
 import MediaManagement from "./Admin/MediaManagement";
 
@@ -64,13 +63,13 @@ export default function App() {
       <main className="min-h-full">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/program" element={<Programs />} />
+          <Route path="/about" element={<About showSEO={true} />} />
+          <Route path="/program" element={<Programs showSEO={true} />} />
           <Route path="/program/nestlers" element={<NestlersProgram />} />
           <Route path="/program/bambino" element={<BambinoProgram />} />
           <Route path="/program/b-junior" element={<BjrProgram />} />
           <Route path="/program/b-senior" element={<BsrProgram />} />
-          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/contact" element={<ContactUs showSEO={true} />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/admissions" element={<Admissions />} />
           <Route path="/schedule-visit" element={<ScheduleVisit />} />
@@ -85,11 +84,10 @@ export default function App() {
           <Route path="/blogs" element={<BlogFeed posts={BLOG_POSTS} />} />
 
           {/* Admin Routes */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboardLayout />}>
             <Route index element={<DashboardHome />} />
             <Route path="admissions" element={<AdmissionsDashboard />} />
-            <Route path="enquiries" element={<EnquiriesDashboard />} />
             <Route path="franchise" element={<FranchiseDashboard />} />
             <Route path="media" element={<MediaManagement />} />
           </Route>

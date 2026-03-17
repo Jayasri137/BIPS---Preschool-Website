@@ -6,9 +6,10 @@ export function useMedia(pageName) {
 
   useEffect(() => {
     async function fetchMedia() {
-      const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+      const API_BASE = "https://bluestoneinternationalpreschool.com/api";
+
       try {
-        const res = await fetch(`${API_BASE}/api/media/${pageName}`);
+        const res = await fetch(`${API_BASE}/media/${pageName}`);
         const data = await res.json();
 
         // Transform and add full URL
@@ -17,14 +18,14 @@ export function useMedia(pageName) {
           transformedData[section] = data[section].map(item => ({
             ...item,
             image_url: item.image_url?.startsWith('data:image') || item.image_url?.startsWith('http')
-              ? item.image_url 
+              ? item.image_url
               : `${API_BASE}${item.image_url}`
           }));
         });
 
         setMedia(transformedData);
       } catch (err) {
-        console.error(`Error fetching media for ${pageName}:`, err);
+        // Error fetching media
       } finally {
         setLoading(false);
       }

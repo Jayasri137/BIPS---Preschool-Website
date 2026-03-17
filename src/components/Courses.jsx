@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
 /**
  * OPTIMIZED IMAGE COMPONENT
@@ -97,6 +98,12 @@ export default function Curriculum() {
 
   return (
     <div className="bg-[#FAF7F2] overflow-x-hidden">
+      <SEO
+        title="Our International Curriculum"
+        description="Discover our globally inspired 'CaterFly' curriculum - a play-based learning journey nurturing creativity and independence for every age group."
+        url="/curriculum"
+        image={sclImg}
+      />
       {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[70vh] md:min-h-[85vh] flex items-center justify-center overflow-hidden pt-20 px-4 sm:px-6">
         <motion.img

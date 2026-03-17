@@ -3,17 +3,18 @@ import { FaBrain, FaCommentDots, FaUsers, FaPalette } from "react-icons/fa";
 import { GiMuscleUp, GiAchievement } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../../hooks/useMedia";
+import SEO from "../../SEO";
 
 export default function NestlersProgram() {
   const { getSectionImage } = useMedia("Program_Details");
   const { getSectionImage: getProgImage } = useMedia("Programs");
-  
+
   const nestlersImg = getProgImage("Nestlers_Header");
   const two = getSectionImage("Nestlers_Play");
   const tree = getSectionImage("Nestlers_Tree");
 
   const navigate = useNavigate();
-     const skills = [
+  const skills = [
     {
       icon: <FaBrain className="text-[#1A2E6B] text-2xl" />,
       title: "Cognitive & Thinking Skills",
@@ -47,6 +48,12 @@ export default function NestlersProgram() {
   ];
   return (
     <div className="bg-[#FAF7F2] text-gray-900 overflow-hidden">
+      <SEO
+        title="Nestlers Program (2-3 Years)"
+        description="Our Nestlers program for toddlers aged 2–3 years focuses on early development through play, care, and discovery in a nurturing environment."
+        url="/program/nestlers"
+        image={nestlersImg}
+      />
 
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="min-h-[75vh] flex flex-col lg:gap-20 md:flex-row items-center px-6 md:px-16 lg:px-30 py-6 md:py-12 bg-gradient-to-b from-[#ce676a] to-[#fff]">

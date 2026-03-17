@@ -3,17 +3,18 @@ import { FaBrain, FaCommentDots, FaUsers, FaPalette } from "react-icons/fa";
 import { GiMuscleUp, GiAchievement } from "react-icons/gi";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../../hooks/useMedia";
+import SEO from "../../SEO";
 
 export default function BjrProgram() {
   const { getSectionImage } = useMedia("Program_Details");
   const { getSectionImage: getProgImage } = useMedia("Programs");
-  
+
   const nestlersImg = getProgImage("Junior_Header");
   const two = getSectionImage("Junior_Toddler");
   const tree = getSectionImage("Junior_Tree");
 
   const navigate = useNavigate();
-     const skills = [
+  const skills = [
     {
       icon: <FaBrain className="text-[#1A2E6B] text-2xl" />,
       title: "Cognitive & Thinking Skills",
@@ -47,6 +48,12 @@ export default function BjrProgram() {
   ];
   return (
     <div className="bg-[#FAF7F2] text-gray-900 overflow-hidden">
+      <SEO
+        title="B Junior Program (4-5 Years)"
+        description="B Junior offers a balanced blend of guided instruction and exploratory play for children aged 4–5 years, building strong foundations in literacy and numeracy."
+        url="/program/b-junior"
+        image={nestlersImg}
+      />
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="min-h-[75vh] flex flex-col md:flex-row items-center px-6 md:px-16 lg:px-30 py-6 md:py-12 bg-gradient-to-b from-[#67ce70] to-[#fff]">
         

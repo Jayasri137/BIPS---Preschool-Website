@@ -16,10 +16,10 @@ export default function AdminLogin() {
     setLoading(true);
     setError("");
 
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/login`, {
+      const res = await fetch(`${API_BASE}/admin/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -41,7 +41,7 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-6 bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md bg-[#1e293b]/50 backdrop-blur-xl p-10 rounded-3xl border border-white/10 shadow-2xl"
@@ -55,7 +55,7 @@ export default function AdminLogin() {
         </div>
 
         {error && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm text-center"
