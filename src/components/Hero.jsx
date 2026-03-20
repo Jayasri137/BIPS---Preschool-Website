@@ -15,7 +15,10 @@ export default function Hero() {
       {/* BACKGROUND IMAGE */}
       <motion.img
         src={dynamicHeroImg}
-        alt="Kids Learning"
+        alt="Happy children learning and playing at Bluestone International Preschool"
+        fetchPriority="high"
+        loading="eager"
+        decoding="sync"
         initial={{ scale: 1.1 }}
         animate={{ scale: 1 }}
         transition={{ duration: 2, ease: "easeOut" }}
@@ -62,7 +65,7 @@ export default function Hero() {
             variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
             className="text-4xl lg:text-5xl font-extrabold font-baloo leading-tight"
           >
-            Inspiring Young Minds Every Day
+            Bluestone: Inspiring Young Minds Every Day
           </motion.h1>
 
           <motion.p
@@ -97,9 +100,12 @@ export default function Hero() {
           <img
             src={dynamicGirlImg}
             alt="Happy Preschool Girl"
+            fetchPriority="high"
+            loading="eager"
             className="relative max-h-[600px] drop-shadow-2xl"
           />
         </motion.div>
+
 
       </div>
     </section>

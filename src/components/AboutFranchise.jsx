@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
 /* ================= MANUAL CAROUSEL ================= */
 function ManualCarousel({ items }) {
@@ -256,6 +257,11 @@ export default function Franchise() {
 
   return (
     <div className="bg-white overflow-hidden">
+      <SEO 
+        title="Franchise Opportunity"
+        description="Partner with Bluestone International Preschool. Explore our low-risk, high-impact franchise model with end-to-end support."
+        url="/franchise"
+      />
       {/* FLOATING SUCCESS/ERROR ALERT */}
       <AnimatePresence>
         {success && (

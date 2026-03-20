@@ -13,9 +13,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Best Preschool & Daycare"
-        description="Welcome to Bluestone International Preschool, the top-rated preschool and daycare in Salem. We provide a nurturing environment with a holistic curriculum."
-        keywords="preschool, daycare, international preschool, early education, Salem, children education"
+        title="Best Preschool in Edappadi"
+        description="Looking for the best preschool in Edappadi? Bluestone International Preschool offers a safe, engaging environment with modern learning methods to build a strong foundation for your child."
       />
       <Hero />
       <WhyChooseBluestone />

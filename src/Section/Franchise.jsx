@@ -110,6 +110,8 @@ export default function FranchiseOpportunity() {
                           <img
                             src={dynamicImg}
                             alt="Kids reading"
+                            loading="lazy"
+                            decoding="async"
                             className="w-full h-full object-cover"
                           />
                         </div>

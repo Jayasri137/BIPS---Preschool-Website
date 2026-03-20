@@ -1,10 +1,16 @@
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom"; // 1. Import Link
+import SEO from "../../SEO";
 
 export default function BlogFeed({ posts = [] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6 max-w-7xl mx-auto py-12">
+      <SEO 
+        title="Blog & News"
+        description="Stay updated with the latest news, parenting tips, and educational insights from Bluestone International Preschool."
+        url="/blogs"
+      />
       {posts.map((post) => (
         <motion.div 
           key={post.id}

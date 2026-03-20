@@ -136,6 +136,8 @@ export default function Programs({ showSEO = false }) {
                   <img
                     src={item.img}
                     alt={item.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-56 object-cover
                                group-hover:scale-110 transition duration-500"
                   />

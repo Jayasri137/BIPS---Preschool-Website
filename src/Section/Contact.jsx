@@ -64,8 +64,8 @@ export default function ContactSection({ showSEO = false }) {
     <section className="w-full md:h-screen h-full relative">
       {showSEO && (
         <SEO
-          title="Contact Us"
-          description="Get in touch with Bluestone International Preschool. Contact us for admissions, franchise opportunities, or general queries."
+          title="Contact Bluestone International Preschool | Kindergarten in Edappadi"
+          description="Get in touch with Bluestone International Preschool in Edappadi for admissions, programs, and daycare details. We’re here to support your child’s early learning journey."
           url="/contact"
         />
       )}

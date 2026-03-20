@@ -39,8 +39,6 @@ export default function Navbar() {
     { name: "Corporate Daycare", path: "/daycare", icon: FaBuilding },
     { name: "Summer Club", path: "/summer-club", icon: FaSun },
     { name: "Parents Talk", path: "/parents-talk", icon: FaUsers },
-    { name: "Partners with Us", path: "/partners", icon: FaHandshake },
-    { name: "Media", path: "/media", icon: FaNewspaper },
     { name: "Contact Us", path: "/contact", icon: FaPhoneAlt },
   ];
 

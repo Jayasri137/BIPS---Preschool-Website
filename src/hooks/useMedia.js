@@ -1,42 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useMediaContext } from '../context/MediaContext';
 
 export function useMedia(pageName) {
-  const [media, setMedia] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { fetchMedia, getMedia, getSectionImage, isLoading } = useMediaContext();
 
   useEffect(() => {
-    async function fetchMedia() {
-      const API_BASE = "https://bluestoneinternationalpreschool.com/api";
-
-      try {
-        const res = await fetch(`${API_BASE}/media/${pageName}`);
-        const data = await res.json();
-
-        // Transform and add full URL
-        const transformedData = {};
-        Object.keys(data).forEach(section => {
-          transformedData[section] = data[section].map(item => ({
-            ...item,
-            image_url: item.image_url?.startsWith('data:image') || item.image_url?.startsWith('http')
-              ? item.image_url
-              : `${API_BASE}${item.image_url}`
-          }));
-        });
-
-        setMedia(transformedData);
-      } catch (err) {
-        // Error fetching media
-      } finally {
-        setLoading(false);
-      }
+    if (pageName) {
+      fetchMedia(pageName);
     }
+  }, [pageName, fetchMedia]);
 
-    if (pageName) fetchMedia();
-  }, [pageName]);
-
-  const getSectionImage = (section, index = 0) => {
-    return media[section]?.[index]?.image_url || null;
+  return {
+    media: getMedia(pageName),
+    loading: isLoading(pageName),
+    getSectionImage: (section, index = 0) => getSectionImage(pageName, section, index)
   };
-
-  return { media, loading, getSectionImage };
 }
+

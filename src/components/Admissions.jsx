@@ -117,8 +117,8 @@ export default function Admissions() {
   return (
     <div className="overflow-x-hidden font-sans">
       <SEO
-        title="Admissions & Enrollment"
-        description="Enroll your child at Bluestone International Preschool. Follow our easy online enquiry and enrollment process for premium early education."
+        title="International Preschool Admission in Salem"
+        description="Enroll your child at Bluestone International Preschool in Salem. We provide a globally inspired curriculum, caring teachers, and a nurturing environment for early learning success."
         url="/admissions"
       />
 

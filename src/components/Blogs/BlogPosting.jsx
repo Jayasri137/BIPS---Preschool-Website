@@ -74,7 +74,6 @@ export default function BlogPost() {
       <SEO
         title={post.title}
         description={post.summary || `Read our latest blog post about ${post.title} by ${post.author}.`}
-        image={post.image}
         url={`/blogs/${post.slug}`}
       />
       <motion.div

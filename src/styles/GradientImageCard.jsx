@@ -27,6 +27,8 @@ export default function GradientImageCard({
           <img
             src={image}
             alt={title}
+            loading="lazy"
+            decoding="async"
             className="absolute w-full h-full object-cover"
           />
 
@@ -53,6 +55,8 @@ export default function GradientImageCard({
           <img
             src={image}
             alt={title}
+            loading="lazy"
+            decoding="async"
             className="absolute inset-0 w-full h-full object-cover opacity-30"
           />
 

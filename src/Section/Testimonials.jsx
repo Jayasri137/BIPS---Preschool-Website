@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import TestimonialCard from "../styles/TestimonialCards";
 import { FaFemale, FaMale } from "react-icons/fa";
+import SEO from "../SEO";
 
 const testimonials = [
   {
@@ -26,7 +27,7 @@ const testimonials = [
   },
 ];
 
-export default function Testimonials() {
+export default function Testimonials({ showSEO = false }) {
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}
@@ -35,6 +36,13 @@ export default function Testimonials() {
       viewport={{ once: true }}
       className="py-20 bg-white relative overflow-hidden"
     >
+      {showSEO && (
+        <SEO 
+          title="Parents' Testimonials"
+          description="Hear from parents about their experience with Bluestone International Preschool and our commitment to excellence."
+          url="/testimonials"
+        />
+      )}
       <div className="max-w-7xl mx-auto px-6 text-center">
         {/* Heading */}
         <motion.p

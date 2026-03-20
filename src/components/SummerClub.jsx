@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
 import { motion, AnimatePresence } from "framer-motion";
+import SEO from "../SEO";
 
 const summerActivities = [
   {
@@ -84,6 +85,11 @@ export default function SummerClub() {
 
   return (
     <div className="bg-white text-gray-800 overflow-x-hidden">
+      <SEO 
+        title="Summer Club"
+        description="Dive into a summer of discovery at Bluestone International Summer Club. Adventure and learning for young minds aged 2-5."
+        url="/summer-club"
+      />
       {/* 1. Hero Section */}
       <section
         className="relative min-h-[85vh] bg-cover bg-center flex items-center justify-center p-6"
@@ -96,8 +102,8 @@ export default function SummerClub() {
             animate={{ opacity: 1, y: 0 }}
             className="text-3xl md:text-7xl font-extrabold leading-tight drop-shadow-lg"
           >
-            Dive into a Summer of{" "}
-            <span className="text-orange-400">Discovery!</span>
+            Bluestone Summer Club: <br />
+            <span className="text-orange-400">A Summer of Discovery!</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}

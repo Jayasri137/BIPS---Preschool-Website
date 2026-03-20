@@ -74,7 +74,9 @@ export default function About({ showSEO = false }) {
             <div className="absolute inset-0 rounded-full overflow-hidden">
               <img
                 src={dynamicMain}
-                alt="Kids reading"
+                alt="Children reading books together at Bluestone International Preschool"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -91,7 +93,9 @@ export default function About({ showSEO = false }) {
             >
               <img
                 src={dynamicSmall1}
-                alt="Child activity"
+                alt="Preschooler participating in creative learning activities"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -108,7 +112,9 @@ export default function About({ showSEO = false }) {
             >
               <img
                 src={dynamicSmall2}
-                alt="Kids playing"
+                alt="Group of kids playing and developing social skills"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

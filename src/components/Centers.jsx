@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
 /**
  * OptimizedImage Component
@@ -43,6 +44,11 @@ export default function Centers() {
 
   return (
     <div className="bg-[#FAF7F2] overflow-hidden">
+      <SEO 
+        title="Our Centers"
+        description="Visit our flagship center in Salem. Experience our nurturing, internationally inspired preschool environment."
+        url="/centres"
+      />
       {/* ================= HERO ================= */}
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden py-20 px-4 sm:px-6 lg:px-8">
         <motion.img

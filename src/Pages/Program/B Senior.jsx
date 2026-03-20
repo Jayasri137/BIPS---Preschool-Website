@@ -50,7 +50,7 @@ export default function BsrProgram() {
     <div className="bg-[#FAF7F2] text-gray-900 overflow-hidden">
       <SEO
         title="B Senior Program (5-6 Years)"
-        description="The B Senior program prepares children aged 5–6 years for primary school with a focus on literacy, numeracy, critical thinking, and social responsibility."
+        description="Our B Senior program prepares children aged 5–6 years for primary school, emphasizing literacy, numeracy, critical thinking, and social-emotional readiness."
         url="/program/b-senior"
         image={nestlersImg}
       />

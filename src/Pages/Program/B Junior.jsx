@@ -50,7 +50,7 @@ export default function BjrProgram() {
     <div className="bg-[#FAF7F2] text-gray-900 overflow-hidden">
       <SEO
         title="B Junior Program (4-5 Years)"
-        description="B Junior offers a balanced blend of guided instruction and exploratory play for children aged 4–5 years, building strong foundations in literacy and numeracy."
+        description="Our B Junior program for children aged 4–5 years focuses on building strong foundations in literacy, numeracy, and thinking skills through a balanced blend of play and structured learning."
         url="/program/b-junior"
         image={nestlersImg}
       />

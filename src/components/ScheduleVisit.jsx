@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { FaCalendarCheck, FaChild, FaSchool } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 
 
 export default function ScheduleVisit() {
@@ -9,6 +10,11 @@ export default function ScheduleVisit() {
   const school = getSectionImage("Schedule_Visit_Side");
   return (
     <section className="bg-[#FFF7ED] min-h-screen">
+      <SEO 
+        title="Schedule a Visit"
+        description="Experience our joyful learning environment firsthand. Book a visit to Bluestone International Preschool today."
+        url="/schedule-visit"
+      />
 
       {/* HERO */}
       <div className="relative overflow-hidden bg-gradient-to-br from-[#74207E] to-purple-900">

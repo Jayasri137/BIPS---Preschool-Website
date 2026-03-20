@@ -11,6 +11,7 @@ import {
 import { useMedia } from "../hooks/useMedia";
 import Testimonials from "../Section/Testimonials";
 import { useNavigate } from "react-router-dom";
+import SEO from "../SEO";
 
 const videoTestimonials = [
   {
@@ -87,6 +88,11 @@ export default function ParentTalks() {
 
   return (
     <div className="bg-white min-h-screen">
+      <SEO 
+        title="Hear from our Happy Parents"
+        description="Discover why parents trust Bluestone International Preschool through real experiences, feedback, and success stories from our happy families."
+        url="/parents-talk"
+      />
       {/* ================= HERO SECTION ================= */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
         <motion.img

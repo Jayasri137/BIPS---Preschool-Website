@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
+import SEO from "../SEO";
 import { Shield, BarChart3, Users, Laptop, Camera, HeartPulse } from 'lucide-react';
 
 const benefits = [
@@ -46,6 +47,11 @@ export default function Daycare() {
   const group = getSectionImage("Side_Image");
   return (
     <div className="bg-white text-[#222A41]">
+      <SEO 
+        title="Daycare Services"
+        description="Our daycare services provide a safe, caring, and structured environment where children learn, play, and grow under expert supervision."
+        url="/daycare"
+      />
       
       {/* Hero Section */}
       <section className="relative h-[85vh] flex items-center bg-gradient-to-r from-purple-900/90 via-purple-700/80 to-orange-500/80 overflow-hidden">
@@ -59,7 +65,7 @@ export default function Daycare() {
         {/* Constrained Container */}
         <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
           <h1 className="text-4xl md:text-7xl font-bold text-white mb-6">
-            Bright futures  <br /><span className="text-orange-400">start here!</span>
+            Bluestone Daycare: <br /><span className="text-orange-400">Bright Futures Start Here!</span>
           </h1>
           <p className="text-medium lg:text-xl text-white/70 max-w-2xl mb-8">
            Bluestone International Provides trusted caregivers, thoughtful routines, and a nurturing atmosphere, we help every child grow happily while parents focus on their day with confidence.

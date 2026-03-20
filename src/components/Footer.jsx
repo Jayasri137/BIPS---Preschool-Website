@@ -96,14 +96,7 @@ export default function Footer() {
                   Parents Talk
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/reviews"
-                  className="hover:text-orange-400 transition"
-                >
-                  Partner Reviews
-                </Link>
-              </li>
+          
               <li>
                 <Link
                   to="/centres"
@@ -112,14 +105,7 @@ export default function Footer() {
                   Centres
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/presence"
-                  className="hover:text-orange-400 transition"
-                >
-                  Our Presence
-                </Link>
-              </li>
+             
             </ul>
           </motion.div>
 
@@ -135,11 +121,7 @@ export default function Footer() {
                   Blogs
                 </Link>
               </li>
-              <li>
-                <Link to="/media" className="hover:text-orange-400 transition">
-                  Media
-                </Link>
-              </li>
+              
               <li>
                 <Link
                   to="/franchise"
@@ -148,14 +130,7 @@ export default function Footer() {
                   Franchise
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/partner"
-                  className="hover:text-orange-400 transition"
-                >
-                  Partner With Us
-                </Link>
-              </li>
+           
               <li>
                 <Link
                   to="/admissions"

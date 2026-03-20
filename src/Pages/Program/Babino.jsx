@@ -50,7 +50,7 @@ export default function BambinoProgram() {
     <div className="bg-[#FAF7F2] text-gray-900 overflow-hidden">
       <SEO
         title="Bambino Program (3-4 Years)"
-        description="The Bambino program for children aged 3–4 years nurtures natural curiosity through play-based and experiential learning."
+        description="Our Bambino program is thoughtfully designed for children aged 3–4 years, focusing on building curiosity, communication, and confidence through guided play."
         url="/program/bambino"
         image={nestlersImg}
       />

@@ -13,8 +13,8 @@ export default function AboutBluestone() {
   return (
     <main className="bg-white overflow-hidden">
       <SEO
-        title="About Our Campus"
-        description="Explore Bluestone International Preschool's world-class facilities, meet our leadership, and see our nurturing learning environment."
+        title="Preschool with Daycare Admission"
+        description="Bluestone International Preschool offers combined preschool and daycare services, ensuring a safe, caring, and stimulating environment for your child throughout the day."
         url="/about-bluestone"
       />
       {/* ================= HERO ================= */}
