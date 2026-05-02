@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, AlertCircle, X } from "lucide-react";
+import { CheckCircle, AlertCircle, RefreshCw, X } from "lucide-react";
 import SEO from "../SEO";
+import Captcha from "../components/Captcha";
 
 export default function ContactSection({ showSEO = false }) {
   const [formData, setFormData] = useState({
@@ -15,14 +16,28 @@ export default function ContactSection({ showSEO = false }) {
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(""); // "success" | "error" | "connection_error" | ""
+  const [success, setSuccess] = useState(""); // "success" | "error" | "connection_error" | "captcha_error" | ""
+  const [currentCaptcha, setCurrentCaptcha] = useState("");
+  const [userCaptcha, setUserCaptcha] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleCaptchaGenerate = useCallback((code) => {
+    setCurrentCaptcha(code);
+    setUserCaptcha("");
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (userCaptcha !== currentCaptcha) {
+      setSuccess("captcha_error");
+      setTimeout(() => setSuccess(""), 5000);
+      return;
+    }
+
     setLoading(true);
     setSuccess("");
 
@@ -48,6 +63,7 @@ export default function ContactSection({ showSEO = false }) {
           interested_in: "General Inquiry",
           message: ""
         });
+        setUserCaptcha("");
       } else {
         setSuccess("error");
       }
@@ -61,7 +77,7 @@ export default function ContactSection({ showSEO = false }) {
   };
 
   return (
-    <section className="w-full md:h-screen h-full relative">
+    <section className="w-full md:h-full relative">
       {showSEO && (
         <SEO
           title="Contact Bluestone International Preschool | Kindergarten in Edappadi"
@@ -90,6 +106,8 @@ export default function ContactSection({ showSEO = false }) {
               <p className="text-xs text-gray-500">
                 {success === "success"
                   ? "We'll get back to you shortly."
+                  : success === "captcha_error"
+                  ? "Invalid CAPTCHA code. Please try again."
                   : "Please check your connection and try again."}
               </p>
             </div>
@@ -165,7 +183,7 @@ export default function ContactSection({ showSEO = false }) {
               </div>
 
               {/* Message */}
-              <div className="mb-10">
+              <div className="mb-6">
                 <textarea
                   name="message"
                   value={formData.message}
@@ -173,6 +191,19 @@ export default function ContactSection({ showSEO = false }) {
                   placeholder="Your Message"
                   rows="3"
                   className="w-full bg-[#3A4158] text-white px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition"
+                />
+              </div>
+
+              {/* Captcha Section */}
+              <div className="mb-10 space-y-4">
+                <Captcha onCaptchaGenerate={handleCaptchaGenerate} variant="dark" />
+                <input
+                  type="text"
+                  placeholder="Enter Captcha Code"
+                  value={userCaptcha}
+                  onChange={(e) => setUserCaptcha(e.target.value)}
+                  className="w-full bg-[#3A4158] text-white px-5 py-4 rounded-xl outline-none focus:ring-2 focus:ring-orange-500 transition"
+                  required
                 />
               </div>
 
@@ -191,7 +222,7 @@ export default function ContactSection({ showSEO = false }) {
         {/* RIGHT – GOOGLE MAP */}
         <div className="w-full h-[400px] md:h-full relative">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3909.0064802203015!2d77.895065!3d11.551392499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba9599f3a4546b9%3A0x4aea79cf0f5182a9!2sBluestone%20Overseas%20Consultants!5e0!3m2!1sen!2sin!4v1768804207974!5m2!1sen!2sin"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3909.007952729669!2d77.894973!3d11.5512869!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x860136d551614371%3A0x6643a2ac8117ad05!2sBluestone%20International%20Pre-school!5e0!3m2!1sen!2sin!4v1777717269449!5m2!1sen!2sin"
             title="School Location"
             className="w-full h-full border-0 transition-all duration-700"
             allowFullScreen=""

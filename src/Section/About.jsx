@@ -29,7 +29,7 @@ export default function About({ showSEO = false }) {
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          <p className="text-orange-500 text-xl font-semibold mb-4">
+          <p className="text-orange-500 text-xl px-10 font-semibold mb-4">
             About Bluestone
           </p>
 
@@ -40,11 +40,8 @@ export default function About({ showSEO = false }) {
           </h2>
 
           <p className="mt-6 text-gray-600 leading-relaxed">
-            At Bluestone International Preschool, we believe early childhood is
-            the foundation of lifelong learning. Our approach blends play,
-            creativity, and structured learning to help children grow
-            academically, socially, and emotionally in a safe and nurturing
-            environment.
+          At Bluestone International Preschool, recognized as the Best Preschool in Edappadi, we firmly believe that early childhood is the cornerstone of lifelong learning and personal growth. Our innovative approach seamlessly blends joyful play, boundless creativity, and thoughtfully structured learning experiences, empowering young children to thrive academically, socially, and emotionally. Nestled in a safe, stimulating, and nurturing environment, we foster holistic development through age-appropriate activities that spark curiosity, build confidence, and cultivate essential life skills.
+         <br/> As the Best Preschool in Edappadi, Bluestone isn't just a school; it's a vibrant community where tomorrow's leaders are shaped today, equipped with resilience, empathy, and a lifelong passion for learning. Join us in laying the foundation for your child's extraordinary future.
           </p>
 
           <motion.button
@@ -68,7 +65,7 @@ export default function About({ showSEO = false }) {
           className="flex justify-center"
         >
           {/* FIXED RATIO CONTAINER */}
-          <div className="relative w-[280px] md:w-[320px] aspect-square">
+          <div className="relative w-[380px] md:w-[420px] aspect-square">
 
             {/* BIG IMAGE */}
             <div className="absolute inset-0 rounded-full overflow-hidden">

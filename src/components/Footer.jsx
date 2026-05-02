@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useMedia } from "../hooks/useMedia";
@@ -21,7 +22,23 @@ const item = {
 
 export default function Footer() {
   const { getSectionImage } = useMedia("General");
+  const [centers, setCenters] = useState([]);
   const logo = getSectionImage("Footer_Logo");
+
+  useEffect(() => {
+    const fetchCenters = async () => {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+      try {
+        const res = await fetch(`${API_BASE}/centers`);
+        const data = await res.json();
+        if (Array.isArray(data)) setCenters(data);
+      } catch (err) {
+        console.error("Failed to fetch centers for footer:", err);
+      }
+    };
+    fetchCenters();
+  }, []);
+
   return (
     <footer className="bg-[#74207E] text-white w-full">
       {/* MAIN */}
@@ -174,16 +191,19 @@ export default function Footer() {
                   +91 99405 12066
                 </a>
               </li>
-              <li className="map">
-                <a
-                  href="https://maps.app.goo.gl/FexVPGPbVhqABGgo6"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-orange-400 transition block break-words"
-                >
-                  No. 9/179/1, Vettukadu, Erumaipatti PO, Idappadi TK, Salem, Tamil
-                  Nadu – 637102
-                </a>
+              <li className="space-y-2">
+                <p className="text-white font-bold mb-2">Our Centers:</p>
+                {centers.length === 0 ? (
+                  <p className="text-white/40 text-xs italic">Loading centers...</p>
+                ) : centers.map(c => (
+                  <Link
+                    key={c.id}
+                    to="/centres"
+                    className="hover:text-orange-400 transition block text-sm"
+                  >
+                    <span className="font-semibold text-white/80">{c.name.split(' ')[0]}:</span> {c.address.split(',').slice(0, 2).join(',')}
+                  </Link>
+                ))}
               </li>
             </ul>
 
@@ -229,11 +249,11 @@ export default function Footer() {
       <div
         className="
         max-w-7xl mx-auto px-6 sm:px-8 py-5
-        text-center md:text-left text-[13px] sm:text-[14px]
+        text-center md:text-center text-[13px] sm:text-[14px]
         text-white/80
       "
       >
-        © 2026 Bluestone International Preschool. All rights reserved.
+        © {new Date().getFullYear()} Bluestone International Preschool | crafted by <a href="https://bluestonetechpark.com" target="_blank" rel="noopener noreferrer" className="hover:underline hover:text-orange-500 transition-all font-bold">BLUESTONE TECHPARK</a> <span className="text-white/20 " >V1.0.1</span>
       </div>
     </footer>
   );

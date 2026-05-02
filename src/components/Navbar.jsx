@@ -16,6 +16,7 @@ import {
   FaBookOpen,
   FaIndustry,
 } from "react-icons/fa";
+import Logo from "./logo.png";
 
 export default function Navbar() {
   const { getSectionImage } = useMedia("General");
@@ -65,7 +66,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between h-20">
           <Link to="/">
-            <img src={logo} alt="Bluestone Preschool" className="h-25 w-40" />
+            <img src={Logo} alt="Bluestone Preschool" className="h-20 w-43" />
           </Link>
 
           {/* ================= DESKTOP MENU ================= */}

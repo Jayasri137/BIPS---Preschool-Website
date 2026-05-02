@@ -1,33 +1,39 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import TestimonialCard from "../styles/TestimonialCards";
 import { FaFemale, FaMale } from "react-icons/fa";
 import SEO from "../SEO";
 
-const testimonials = [
-  {
-    name: "Stephen Miller",
-    role: "Parent of Bambino Program",
-    image: FaMale, // Pass the component directly
-    text: "My child looks forward to school every single day, which itself says a lot. The teachers are warm, patient, and genuinely caring.",
-    bg: "#FFE3D3",
-  },
-  {
-    name: "Anitha R",
-    role: "Parent of B Junior",
-    image: FaFemale,
-    text: "Bluestone offers the perfect balance between learning and play. The activities are well planned and engaging.",
-    bg: "#D6EEFF",
-  },
-  {
-    name: "Priya M",
-    role: "Parent of B Senior Student",
-    image: FaFemale,
-    text: "We love how the school focuses on creativity and overall development, not just academics.",
-    bg: "#DFF3C2",
-  },
-];
-
 export default function Testimonials({ showSEO = false }) {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+      try {
+        const res = await fetch(`${API_BASE}/testimonials`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          // Format data for TestimonialCard
+          const formattedData = data.map(t => ({
+            ...t,
+            image: t.image_url ? t.image_url : (t.gender === 'male' ? FaMale : FaFemale),
+            bg: t.bg_color
+          }));
+          setTestimonials(formattedData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch testimonials:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTestimonials();
+  }, []);
+
+  if (loading) return null; // Or a skeleton
+  if (testimonials.length === 0) return null;
   return (
     <motion.section
       initial={{ opacity: 0, y: 40 }}

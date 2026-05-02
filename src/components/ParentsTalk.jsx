@@ -16,28 +16,28 @@ import SEO from "../SEO";
 const videoTestimonials = [
   {
     id: 1,
-    parentName: "Mrs. Anjali Sharma",
+    parentName: "Mrs. Anjali",
     childGrade: "Nestlers",
     thumbnail:
       "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 2,
-    parentName: "Mr. Rajesh Khanna",
+    parentName: "Mr. Rajesh",
     childGrade: "B-Junior",
     thumbnail:
       "https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 3,
-    parentName: "Mrs. Priya Das",
+    parentName: "Mrs. Priya",
     childGrade: "B-Senior",
     thumbnail:
       "https://images.unsplash.com/photo-1544333346-ce7b60bb3ae1?auto=format&fit=crop&q=80&w=800",
   },
   {
     id: 4,
-    parentName: "Mr. Amit Verma",
+    parentName: "Mr. Aravinth",
     childGrade: "Bambino",
     thumbnail:
       "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=800",
@@ -47,25 +47,25 @@ const videoTestimonials = [
 const writtenTestimonials = [
   {
     text: "The curriculum at Bluestone is truly international. My daughter has become so much more confident.",
-    author: "Sneha Reddy",
+    author: "Sneha",
     relation: "Mother of Aavya",
     stars: 5,
   },
   {
     text: "Safety was my biggest concern. Seeing the CCTV access made me choose Bluestone without a doubt.",
-    author: "Vikram Malhotra",
+    author: "Vikram",
     relation: "Father of Reyansh",
     stars: 5,
   },
   {
     text: "The teachers are incredibly patient and caring. I see a daily improvement in my son's social skills.",
-    author: "Karan Singh",
+    author: "Karan",
     relation: "Father of Kabir",
     stars: 5,
   },
   {
     text: "Innovative teaching methods! My child actually looks forward to going to school every morning.",
-    author: "Meera Iyer",
+    author: "Meera",
     relation: "Mother of Diya",
     stars: 5,
   },

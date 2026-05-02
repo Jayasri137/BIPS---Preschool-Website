@@ -38,6 +38,8 @@ const AdminDashboardLayout = lazy(() => import("./Admin/Dashboard"));
 const DashboardHome = lazy(() => import("./Admin/DashboardHome"));
 const AdmissionsDashboard = lazy(() => import("./Admin/Admissions"));
 const FranchiseDashboard = lazy(() => import("./Admin/Franchise"));
+const CentersDashboard = lazy(() => import("./Admin/Centers"));
+const TestimonialsDashboard = lazy(() => import("./Admin/Testimonials"));
 const MediaManagement = lazy(() => import("./Admin/MediaManagement"));
 
 // Other
@@ -72,6 +74,18 @@ export default function App() {
       <main className="min-h-full">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboardLayout />}>
+              <Route index element={<DashboardHome />} />
+              <Route path="admissions" element={<AdmissionsDashboard />} />
+              <Route path="franchise" element={<FranchiseDashboard />} />
+              <Route path="centers" element={<CentersDashboard />} />
+              <Route path="testimonials" element={<TestimonialsDashboard />} />
+              <Route path="media" element={<MediaManagement />} />
+            </Route>
+
+            {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About showSEO={true} />} />
             <Route path="/program" element={<Programs showSEO={true} />} />
@@ -92,15 +106,6 @@ export default function App() {
             <Route path="/parents-talk" element={<ParentTalks />} />
             <Route path="/blogs/:slug" element={<BlogPost />} />
             <Route path="/blogs" element={<BlogFeed posts={BLOG_POSTS} />} />
-
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboardLayout />}>
-              <Route index element={<DashboardHome />} />
-              <Route path="admissions" element={<AdmissionsDashboard />} />
-              <Route path="franchise" element={<FranchiseDashboard />} />
-              <Route path="media" element={<MediaManagement />} />
-            </Route>
           </Routes>
         </Suspense>
       </main>

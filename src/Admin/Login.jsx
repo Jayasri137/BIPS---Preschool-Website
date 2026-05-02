@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, User, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Lock, User, Eye, EyeOff, Loader2, RefreshCw } from "lucide-react";
+import Captcha from "../components/Captcha";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
@@ -9,10 +10,23 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [currentCaptcha, setCurrentCaptcha] = useState("");
+  const [userCaptcha, setUserCaptcha] = useState("");
   const navigate = useNavigate();
+
+  const handleCaptchaGenerate = useCallback((code) => {
+    setCurrentCaptcha(code);
+    setUserCaptcha("");
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (userCaptcha !== currentCaptcha) {
+      setError("Invalid CAPTCHA code");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -100,6 +114,19 @@ export default function AdminLogin() {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
+          </div>
+
+          <div className="space-y-4">
+            <label className="text-sm font-semibold text-gray-300 ml-1">Human Verification</label>
+            <Captcha onCaptchaGenerate={handleCaptchaGenerate} variant="dark" />
+            <input
+              type="text"
+              required
+              value={userCaptcha}
+              onChange={(e) => setUserCaptcha(e.target.value)}
+              className="w-full bg-[#334155]/50 text-white px-4 py-4 rounded-2xl outline-none border border-white/5 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 transition-all font-mono tracking-wider"
+              placeholder="Enter the code above"
+            />
           </div>
 
           <button

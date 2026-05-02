@@ -20,6 +20,8 @@ const NAV_ITEMS = [
   { name: "Admin Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
   { name: "Student Admissions", icon: Users, path: "/admin/dashboard/admissions" },
   { name: "Franchise Form", icon: MapPin, path: "/admin/dashboard/franchise" },
+  { name: "Centers Management", icon: MapPin, path: "/admin/dashboard/centers" },
+  { name: "Testimonials", icon: MessageSquare, path: "/admin/dashboard/testimonials" },
   { name: "Media Management", icon: ImageIcon, path: "/admin/dashboard/media" },
 ];
 

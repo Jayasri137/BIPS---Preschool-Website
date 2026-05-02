@@ -18,6 +18,8 @@ import {
 
 import { useMedia } from "../hooks/useMedia";
 import SEO from "../SEO";
+import Captcha from "./Captcha";
+import { useCallback } from "react";
 
 /* ================= MANUAL CAROUSEL ================= */
 function ManualCarousel({ items }) {
@@ -91,6 +93,13 @@ export default function Franchise() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
+  const [currentCaptcha, setCurrentCaptcha] = useState("");
+  const [userCaptcha, setUserCaptcha] = useState("");
+
+  const handleCaptchaGenerate = useCallback((code) => {
+    setCurrentCaptcha(code);
+    setUserCaptcha("");
+  }, []);
 
   // VALIDATION LOGIC
   const validate = () => {
@@ -140,6 +149,12 @@ export default function Franchise() {
 
     // Trigger validation on click
     if (!validate()) return;
+
+    if (userCaptcha !== currentCaptcha) {
+      setSuccess("captcha_error");
+      setTimeout(() => setSuccess(""), 5000);
+      return;
+    }
 
     setIsSubmitting(true);
     setSuccess("");
@@ -292,6 +307,8 @@ export default function Franchise() {
               <p className="text-xs text-gray-500">
                 {success === "success"
                   ? "We will contact you soon."
+                  : success === "captcha_error"
+                  ? "Invalid CAPTCHA code. Please try again."
                   : "Check your internet or form fields."}
               </p>
             </div>
@@ -487,6 +504,20 @@ export default function Franchise() {
                   rows="3"
                   className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-500 resize-none transition-all"
                 />
+
+                {/* Captcha Section */}
+                <div className="space-y-4 pt-2">
+                  <Captcha onCaptchaGenerate={handleCaptchaGenerate} variant="light" />
+                  <input
+                    type="text"
+                    placeholder="Enter Captcha Code *"
+                    value={userCaptcha}
+                    onChange={(e) => setUserCaptcha(e.target.value)}
+                    className="w-full px-6 py-4 rounded-2xl bg-gray-50 border border-gray-200 outline-none focus:ring-2 focus:ring-purple-500 transition-all font-mono tracking-wider"
+                    required
+                  />
+                </div>
+
                 <button
                   type="submit"
                   disabled={isSubmitting}

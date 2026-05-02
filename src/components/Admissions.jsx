@@ -12,6 +12,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useMedia } from "../hooks/useMedia";
 import SEO from "../SEO";
+import Captcha from "./Captcha";
+import { useCallback } from "react";
 
 export default function Admissions() {
   const navigate = useNavigate();
@@ -33,6 +35,13 @@ export default function Admissions() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [currentCaptcha, setCurrentCaptcha] = useState("");
+  const [userCaptcha, setUserCaptcha] = useState("");
+
+  const handleCaptchaGenerate = useCallback((code) => {
+    setCurrentCaptcha(code);
+    setUserCaptcha("");
+  }, []);
 
   // 1. UPDATED VALIDATION LOGIC
   const validateForm = () => {
@@ -72,6 +81,12 @@ export default function Admissions() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
+    if (userCaptcha !== currentCaptcha) {
+      setSuccess("captcha_error");
+      setTimeout(() => setSuccess(""), 5000);
+      return;
+    }
 
     setLoading(true);
     setSuccess("");
@@ -131,7 +146,13 @@ export default function Admissions() {
             </div>
             <div className="flex-1">
               <h4 className="font-bold text-purple-900">{success === "success" ? "Enquiry Sent!" : "Oops!"}</h4>
-              <p className="text-xs text-gray-500">{success === "success" ? "We've received your details and will call you soon." : "Please check your fields and try again."}</p>
+              <p className="text-xs text-gray-500">
+                {success === "success" 
+                  ? "We've received your details and will call you soon." 
+                  : success === "captcha_error"
+                  ? "Invalid CAPTCHA code. Please try again."
+                  : "Please check your fields and try again."}
+              </p>
             </div>
             <button onClick={() => setSuccess("")} className="text-gray-300 hover:text-gray-600"><X size={18} /></button>
           </motion.div>
@@ -208,6 +229,19 @@ export default function Admissions() {
                 </div>
 
                 <textarea name="message" placeholder="Additional comments (optional)..." rows="2" value={formData.message} onChange={handleChange} className="w-full px-5 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-purple-500 outline-none text-sm resize-none" />
+                
+                {/* Captcha Section */}
+                <div className="space-y-3 pt-2">
+                  <Captcha onCaptchaGenerate={handleCaptchaGenerate} variant="light" />
+                  <input
+                    type="text"
+                    placeholder="Enter Captcha Code *"
+                    value={userCaptcha}
+                    onChange={(e) => setUserCaptcha(e.target.value)}
+                    className={inputClass("captcha")}
+                    required
+                  />
+                </div>
               </div>
 
               <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} type="submit" disabled={loading} className="w-full mt-6 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 rounded-xl font-black text-lg shadow-lg disabled:opacity-70 flex items-center justify-center gap-2">
