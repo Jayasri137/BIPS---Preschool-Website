@@ -22,6 +22,8 @@ export default function TestimonialsDashboard() {
 
   useEffect(() => {
     fetchTestimonials();
+
+    
   }, []);
 
   const fetchTestimonials = async () => {
