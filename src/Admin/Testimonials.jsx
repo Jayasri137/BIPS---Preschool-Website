@@ -14,6 +14,8 @@ export default function TestimonialsDashboard() {
   const [editingItem, setEditingItem] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,13 +52,20 @@ export default function TestimonialsDashboard() {
       text: "",
       image_url: "",
       bg_color: "#FFE3D3",
-      gender: "female"
+      gender: "female",
+      testimonial_type: "general"
     });
     setShowModal(true);
   };
 
   const handleEdit = (item) => {
-    setEditingItem(item);
+    setEditingItem({
+      ...item,
+      image_url: item.image_url || "",
+      bg_color: item.bg_color || "#FFE3D3",
+      gender: item.gender || "female",
+      testimonial_type: item.testimonial_type || "general"
+    });
     setShowModal(true);
   };
 
@@ -109,20 +118,22 @@ export default function TestimonialsDashboard() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
     const token = localStorage.getItem("admin_token");
-    
     const method = editingItem.id ? 'PUT' : 'POST';
     const url = editingItem.id ? `${API_BASE}/admin/testimonials/${editingItem.id}` : `${API_BASE}/admin/testimonials`;
 
     try {
+      const payload = {
+        ...editingItem,
+        testimonial_type: editingItem.testimonial_type || "general"
+      };
       const res = await fetch(url, {
         method,
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(editingItem)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setShowModal(false);
@@ -136,6 +147,42 @@ export default function TestimonialsDashboard() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const uploadTestimonialImage = async (file) => {
+    if (!file) return;
+    setIsUploadingImage(true);
+    const token = localStorage.getItem("admin_token");
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(`${API_BASE}/admin/testimonials/upload`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        },
+        body: formData
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEditingItem(prev => ({ ...prev, image_url: data.image_url || "" }));
+        toast.success("Image uploaded successfully");
+      } else {
+        toast.error("Failed to upload image");
+      }
+    } catch (err) {
+      toast.error("Image upload error");
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
+  const handleImageSelect = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    uploadTestimonialImage(file);
+    event.target.value = null;
   };
 
   const toggleStatus = async (item) => {
@@ -216,6 +263,7 @@ export default function TestimonialsDashboard() {
               <tr className="text-gray-500 text-[10px] uppercase tracking-widest">
                 <th className="px-6 py-4 font-black">Parent Info</th>
                 <th className="px-6 py-4 font-black">Testimonial Content</th>
+                <th className="px-6 py-4 font-black">Type</th>
                 <th className="px-6 py-4 font-black">Theme</th>
                 <th className="px-6 py-4 font-black">Status</th>
                 <th className="px-6 py-4 font-black text-right">Action</th>
@@ -241,9 +289,17 @@ export default function TestimonialsDashboard() {
                 <tr key={item.id} className="hover:bg-gray-50 transition-colors group">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${item.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'}`}>
-                        {item.name[0]}
-                      </div>
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url.startsWith("http") ? item.image_url : `${API_BASE}${item.image_url}`}
+                          alt={item.name || "Reviewer"}
+                          className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                        />
+                      ) : (
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${item.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'}`}>
+                          {item.name?.[0] || 'P'}
+                        </div>
+                      )}
                       <div>
                         <p className="text-sm font-bold text-gray-900">{item.name}</p>
                         <p className="text-[10px] text-gray-500 uppercase">{item.role}</p>
@@ -252,6 +308,9 @@ export default function TestimonialsDashboard() {
                   </td>
                   <td className="px-6 py-4 max-w-md">
                     <p className="text-[11px] text-gray-600 line-clamp-2 italic">"{item.text}"</p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className="text-[10px] uppercase font-black tracking-wide text-gray-500">{item.testimonial_type || 'general'}</span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
@@ -367,6 +426,30 @@ export default function TestimonialsDashboard() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <label className="text-xs text-gray-500 font-bold uppercase">Upload Reviewer Image</label>
+                  <div className="flex items-center gap-3">
+                    <label htmlFor="testimonial-image-upload" className="cursor-pointer inline-flex items-center justify-center rounded-xl bg-purple-600 px-4 py-3 text-sm font-semibold text-white hover:bg-purple-700 transition">
+                      {isUploadingImage ? "Uploading..." : "Upload Image"}
+                    </label>
+                    <input
+                      id="testimonial-image-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageSelect}
+                      disabled={isUploadingImage}
+                    />
+                    {editingItem.image_url && !isUploadingImage && (
+                      <img
+                        src={editingItem.image_url.startsWith("http") ? editingItem.image_url : `${API_BASE}${editingItem.image_url}`}
+                        alt="Preview"
+                        className="w-20 h-20 rounded-3xl object-cover border border-gray-200"
+                      />
+                    )}
+                  </div>
+                  <p className="text-xs text-gray-400">Upload a JPG/PNG image for the testimonial reviewer.</p>
+                </div>
+                <div className="space-y-2">
                   <label className="text-xs text-gray-500 font-bold uppercase">Gender (for default icon)</label>
                   <select
                     className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-orange-500/50"
@@ -378,14 +461,19 @@ export default function TestimonialsDashboard() {
                   </select>
                 </div>
                 <div className="space-y-2">
+                  <label className="text-xs text-gray-500 font-bold uppercase">Testimonial Type</label>
+                  <select
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-orange-500/50"
+                    value={editingItem.testimonial_type}
+                    onChange={e => setEditingItem({ ...editingItem, testimonial_type: e.target.value })}
+                  >
+                    <option value="general">General</option>
+                    <option value="franchise">Franchise</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
                   <label className="text-xs text-gray-500 font-bold uppercase">Background Color (Hex)</label>
                   <div className="flex gap-2">
-                    <input
-                      className="flex-1 bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm text-gray-900 outline-none focus:border-orange-500/50"
-                      value={editingItem.bg_color}
-                      onChange={e => setEditingItem({ ...editingItem, bg_color: e.target.value })}
-                    />
-                    <div className="flex gap-1">
                       {['#FFE3D3', '#D6EEFF', '#DFF3C2', '#FDE2FF'].map(color => (
                         <button
                           key={color}
@@ -395,7 +483,6 @@ export default function TestimonialsDashboard() {
                           style={{ backgroundColor: color }}
                         />
                       ))}
-                    </div>
                   </div>
                 </div>
                 

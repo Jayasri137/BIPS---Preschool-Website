@@ -154,7 +154,7 @@ export default function BsrProgram() {
           <ul className="space-y-6 text-base text-[80%] md:text-[80%] lg:text-[100%]">
             {[
               ["👶 Age", "5 – 6 Years"],
-              ["🕘 Class Timing", "9:30 AM – 01:30 PM"],
+              ["🕘 Class Timing", "9:15 AM – 01:30 PM"],
               ["📅 Duration", "Academic Year (Jun – Mar)"],
               ["🎨 Activities", "Reading, Writing & Math"],
               ["👩‍🏫 Teacher–Child Ratio", "1:15"],

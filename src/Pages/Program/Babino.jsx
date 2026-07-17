@@ -154,7 +154,7 @@ export default function BambinoProgram() {
           <ul className="space-y-6 text-base text-[80%] md:text-[80%] lg:text-[100%]">
             {[
               ["👶 Age", "3 – 4 Years"],
-              ["🕘 Class Timing", "9:30 AM – 12:30 PM"],
+              ["🕘 Class Timing", "9:15 AM – 01:30 PM"],
               ["📅 Duration", "Academic Year (Jun – Mar)"],
               ["🎨 Activities", "Storytelling, Music, Art & play"],
               ["👩‍🏫 Teacher–Child Ratio", "1:15"],

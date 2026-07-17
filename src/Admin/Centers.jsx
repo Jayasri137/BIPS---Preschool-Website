@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Plus, MapPin, Phone, Mail, Clock,
-  Trash2, Pencil, X, ChevronLeft, ChevronRight, Save, Loader2
+  Trash2, Pencil, X, ChevronLeft, ChevronRight, Save, Loader2, Image as ImageIcon, Upload
 } from "lucide-react";
 import toast from 'react-hot-toast';
+import CropModal from "./CropModal";
 
 export default function CentersDashboard() {
   const [centers, setCenters] = useState([]);
@@ -18,6 +19,18 @@ export default function CentersDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const tableRef = useRef(null);
+
+  // Gallery Modal State
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [selectedGalleryCenter, setSelectedGalleryCenter] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [editingGalleryImageId, setEditingGalleryImageId] = useState(null);
+
+  // Crop State
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageSrc, setCropImageSrc] = useState(null);
 
   useEffect(() => {
     fetchCenters();
@@ -157,6 +170,100 @@ export default function CentersDashboard() {
     }
   };
 
+  // Gallery Management
+  const fetchGallery = async (center) => {
+    setSelectedGalleryCenter(center);
+    setShowGalleryModal(true);
+    setIsLoadingGallery(true);
+    setEditingGalleryImageId(null);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+    const token = localStorage.getItem("admin_token");
+    try {
+      const res = await fetch(`${API_BASE}/admin/media`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        const centerImages = data.filter(img => img.page_name === "Centers" && img.section_name === center.name);
+        setGalleryImages(centerImages);
+      } else {
+        setGalleryImages([]);
+      }
+    } catch (err) {
+      toast.error("Failed to load gallery");
+    } finally {
+      setIsLoadingGallery(false);
+    }
+  };
+
+  const onFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.addEventListener('load', () => setCropImageSrc(reader.result?.toString() || ''));
+      reader.readAsDataURL(e.target.files[0]);
+      setCropModalOpen(true);
+    }
+    e.target.value = null; // Reset input so same file can be selected again
+  };
+
+  const handleCropComplete = async (croppedBlob) => {
+    const fileObj = new File([croppedBlob], "cropped.webp", { type: "image/webp" });
+    handleUploadImage(fileObj);
+  };
+
+  const handleUploadImage = async (file) => {
+    setIsUploading(true);
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+    const token = localStorage.getItem("admin_token");
+
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("page_name", "Centers");
+    formData.append("section_name", selectedGalleryCenter.name);
+    formData.append("image_alt", `${selectedGalleryCenter.name} Gallery Image`);
+
+    const url = editingGalleryImageId 
+        ? `${API_BASE}/admin/media/${editingGalleryImageId}` 
+        : `${API_BASE}/admin/media/upload`;
+    const method = editingGalleryImageId ? "PUT" : "POST";
+
+    try {
+      const res = await fetch(url, {
+        method: method,
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData
+      });
+      if (res.ok) {
+        toast.success(editingGalleryImageId ? "Image updated successfully!" : "Image uploaded successfully!");
+        setEditingGalleryImageId(null);
+        fetchGallery(selectedGalleryCenter);
+      } else {
+        toast.error("Failed to upload image");
+      }
+    } catch (err) {
+      toast.error("Upload error");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDeleteImage = async (id) => {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+    const token = localStorage.getItem("admin_token");
+    try {
+      const res = await fetch(`${API_BASE}/admin/media/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      if (res.ok) {
+        toast.success("Image deleted successfully");
+        fetchGallery(selectedGalleryCenter);
+      }
+    } catch (err) {
+      toast.error("Delete error");
+    }
+  };
+
   // Filter and Pagination Logic
   const filteredData = centers.filter(item =>
     item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -267,6 +374,13 @@ export default function CentersDashboard() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => fetchGallery(item)}
+                        className="p-2 rounded-xl hover:bg-green-50 text-green-600 transition-all"
+                        title="Manage Gallery"
+                      >
+                        <ImageIcon size={18} />
+                      </button>
                       <button
                         onClick={() => handleEdit(item)}
                         className="p-2 rounded-xl hover:bg-blue-50 text-blue-600 transition-all"
@@ -410,6 +524,78 @@ export default function CentersDashboard() {
           </div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {showGalleryModal && (
+          <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white w-full max-w-4xl rounded-3xl border border-gray-200 shadow-2xl p-8 overflow-y-auto max-h-[90vh] no-scrollbar"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Gallery for {selectedGalleryCenter?.name}</h3>
+                <button onClick={() => setShowGalleryModal(false)} className="text-gray-400 hover:text-gray-600"><X /></button>
+              </div>
+
+              <div className="mb-6 bg-gray-50 p-6 rounded-2xl border border-gray-200 border-dashed text-center">
+                <input type="file" accept="image/*" onChange={onFileSelect} disabled={isUploading} className="hidden" id="gallery-upload" />
+                <label htmlFor="gallery-upload" className={`cursor-pointer flex flex-col items-center gap-2 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <div className={`w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm border border-gray-200 ${editingGalleryImageId ? 'text-blue-600' : 'text-purple-600'}`}>
+                    {isUploading ? <Loader2 className="animate-spin" /> : <Upload size={20} />}
+                  </div>
+                  <p className="text-sm font-bold text-gray-700">
+                    {isUploading ? "Uploading..." : editingGalleryImageId ? "Click to upload replacement image" : "Click to upload a new image"}
+                  </p>
+                </label>
+                {editingGalleryImageId && !isUploading && (
+                  <button onClick={() => setEditingGalleryImageId(null)} className="mt-3 text-xs text-red-500 font-bold hover:underline">
+                    Cancel Edit
+                  </button>
+                )}
+              </div>
+
+              {isLoadingGallery ? (
+                <div className="py-20 text-center"><Loader2 className="animate-spin mx-auto text-purple-600 mb-2" size={32} /><p className="text-gray-500">Loading images...</p></div>
+              ) : galleryImages.length === 0 ? (
+                <p className="text-center text-gray-500 italic py-10">No images found for this center.</p>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {galleryImages.map(img => (
+                    <div key={img.id} className={`relative group rounded-xl overflow-hidden shadow-sm border ${editingGalleryImageId === img.id ? 'border-blue-500 ring-2 ring-blue-500/50' : 'border-gray-200'} aspect-[4/3]`}>
+                      <img src={img.image_url?.startsWith('data:') || img.image_url?.startsWith('http') ? img.image_url : `${import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com"}${img.image_url}`} alt={img.image_alt} className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${editingGalleryImageId === img.id ? 'opacity-50' : ''}`} />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-10">
+                        <button onClick={() => setEditingGalleryImageId(img.id)} className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center hover:scale-110 shadow-lg transition-transform" title="Edit">
+                          <Pencil size={18} />
+                        </button>
+                        <button onClick={() => handleDeleteImage(img.id)} className="w-10 h-10 bg-white text-red-600 rounded-full flex items-center justify-center hover:scale-110 shadow-lg transition-transform" title="Delete">
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {cropModalOpen && (
+        <CropModal
+          isOpen={cropModalOpen}
+          imageSrc={cropImageSrc}
+          onClose={() => {
+            setCropModalOpen(false);
+            setCropImageSrc(null);
+          }}
+          onCropComplete={(blob) => {
+            setCropModalOpen(false);
+            handleCropComplete(blob);
+          }}
+        />
+      )}
     </div>
   );
 }

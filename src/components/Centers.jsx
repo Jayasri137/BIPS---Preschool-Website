@@ -222,15 +222,20 @@ export default function Centers() {
         {/* ================= IMAGE GALLERY ================= */}
         <div className="mb-24">
           <h3 className="text-2xl md:text-3xl font-extrabold text-purple-900 text-center mb-10">
-            Explore Our Campus
+            {selectedCenter ? `Explore ${selectedCenter.name} Campus` : "Explore Our Campus"}
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-            {galleryImages.map((img, i) => (
-              <motion.div key={i} whileHover={{ scale: 1.05 }} className="group relative shadow-lg rounded-3xl overflow-hidden">
-                <OptimizedImage src={img} alt={`Gallery ${i}`} className="aspect-square" />
-              </motion.div>
-            ))}
-          </div>
+          
+          {media[selectedCenter?.name] && media[selectedCenter?.name].length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+              {media[selectedCenter.name].map(img => img.image_url).map((img, i) => (
+                <motion.div key={i} whileHover={{ scale: 1.05 }} className="group relative shadow-lg rounded-3xl overflow-hidden">
+                  <OptimizedImage src={img} alt={`Gallery ${i}`} className="aspect-square" />
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-gray-500 font-medium italic">No images available for this center yet.</p>
+          )}
         </div>
 
         {/* ================= WHY PARENTS LOVE US ================= */}

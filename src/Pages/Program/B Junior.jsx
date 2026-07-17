@@ -153,7 +153,7 @@ export default function BjrProgram() {
           <ul className="space-y-6 text-base text-[80%] md:text-[80%] lg:text-[100%]">
             {[
               ["👶 Age", "4 – 5 Years"],
-              ["🕘 Class Timing", "9:30 AM – 01:30 PM"],
+              ["🕘 Class Timing", "9:15 AM – 01:30 PM"],
               ["📅 Duration", "Academic Year (Jun – Mar)"],
               ["🎨 Activities", "Phonics, Numbers, Art & Dance"],
               ["👩‍🏫 Teacher–Child Ratio", "1:15"],

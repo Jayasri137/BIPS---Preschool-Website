@@ -12,7 +12,9 @@ import {
   X,
   Bell,
   Search,
-  ChevronRight
+  ChevronRight,
+  BookOpen,
+  Settings
 } from "lucide-react";
 import { Toaster } from 'react-hot-toast';
 
@@ -23,6 +25,8 @@ const NAV_ITEMS = [
   { name: "Centers Management", icon: MapPin, path: "/admin/dashboard/centers" },
   { name: "Testimonials", icon: MessageSquare, path: "/admin/dashboard/testimonials" },
   { name: "Media Management", icon: ImageIcon, path: "/admin/dashboard/media" },
+  { name: "Blogs", icon: BookOpen, path: "/admin/dashboard/blogs" },
+  { name: "Settings", icon: Settings, path: "/admin/dashboard/settings" },
 ];
 
 export default function AdminDashboardLayout() {

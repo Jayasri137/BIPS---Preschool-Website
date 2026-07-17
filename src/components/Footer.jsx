@@ -164,6 +164,22 @@ export default function Footer() {
                   Contact Us
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/privacy-policy"
+                  className="hover:text-orange-400 transition"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/terms-and-conditions"
+                  className="hover:text-orange-400 transition"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
             </ul>
           </motion.div>
 

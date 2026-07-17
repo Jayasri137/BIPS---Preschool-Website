@@ -13,7 +13,7 @@ export default function Programs({ showSEO = false }) {
       title: "NESTLERS",
       desc: "Our Nestlers program provides a safe, caring, and stimulating environment where children take their first steps into structured learning. Through sensory play, music, movement, and guided exploration, children develop fine and gross motor skills, early social interaction, and emotional security.",
       age: "2 – 3 Years",
-      time: "9:30 - 12:20",
+      time: "9:00 - 04:00",
       img: getSectionImage("Nestlers_Header"),
       arrowColor: "bg-red-400",
       link: "/program/nestlers"
@@ -22,7 +22,7 @@ export default function Programs({ showSEO = false }) {
       title: "BAMBINO",
       desc: "The Bambino program nurtures natural curiosity through play-based and experiential learning.Foundational language skills, early numeracy concepts, and self-confidence are developed in a joyful and engaging classroom environment. Activities are designed to enhance logical thinking, early writing skills, and social responsibility.",
       age: "3 – 4 Years",
-      time: "9:30 - 12:30",
+      time: "9:00 - 04:00",
       img: getSectionImage("Bambino_Header"),
       arrowColor: "bg-blue-500",
       link: "/program/bambino"
@@ -31,7 +31,7 @@ export default function Programs({ showSEO = false }) {
       title: "B JUNIOR",
       desc: "B Junior offers a balanced blend of guided instruction and exploratory play. Children begin structured learning in literacy and numeracy while continuing to develop problem-solving skills, collaboration, and creativity. Activities are designed to enhance logical thinking, early writing skills, and social responsibility.",
       age: "4 – 5 Years",
-      time: "9:30 - 1:30",
+      time: "9:00 - 04:00",
       img: getSectionImage("Junior_Header"),
       arrowColor: "bg-green-500",
       link: "/program/b-junior"
@@ -40,7 +40,7 @@ export default function Programs({ showSEO = false }) {
       title: "B SENIOR",
       desc: "The B Senior program equips children with the academic, social, and emotional readiness required for primary school. Emphasis is placed on literacy, numeracy, critical thinking, and communication skills, along with values such as responsibility, empathy, and independence. Learning is structured, engaging, and developmentally appropriate.",
       age: "5 – 6 Years",
-      time: "9:30 - 1:30",
+      time: "9:00 - 04:00",
       img: getSectionImage("Senior_Header"),
       arrowColor: "bg-yellow-300",
       link: "/program/b-senior"

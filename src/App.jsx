@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import TopBar from "./components/Top";
 import Footer from "./components/Footer";
@@ -31,7 +31,8 @@ const ParentTalks = lazy(() => import("./components/ParentsTalk"));
 const BlogPost = lazy(() => import("./components/Blogs/BlogPosting"));
 const BlogFeed = lazy(() => import("./components/Blogs/BlogListing"));
 const BlogNavbar = lazy(() => import("./components/Blogs/BlogNavbar"));
-
+const PrivacyPolicy = lazy(() => import("./components/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./components/TermsAndConditions"));
 // Admin
 const AdminLogin = lazy(() => import("./Admin/Login"));
 const AdminDashboardLayout = lazy(() => import("./Admin/Dashboard"));
@@ -41,6 +42,8 @@ const FranchiseDashboard = lazy(() => import("./Admin/Franchise"));
 const CentersDashboard = lazy(() => import("./Admin/Centers"));
 const TestimonialsDashboard = lazy(() => import("./Admin/Testimonials"));
 const MediaManagement = lazy(() => import("./Admin/MediaManagement"));
+const BlogsDashboard = lazy(() => import("./Admin/Blogs"));
+const SettingsDashboard = lazy(() => import("./Admin/Settings"));
 
 // Other
 import ScrollToTop from "./components/ScrollToTop";
@@ -61,6 +64,15 @@ export default function App() {
     location.pathname !== "/blogs";
 
   const isAdminPage = location.pathname.startsWith("/admin");
+
+  // Track page views for Google Analytics on route change
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('config', 'G-GVGZDLBHN0', {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]);
 
   return (
     <MediaProvider>
@@ -83,6 +95,8 @@ export default function App() {
               <Route path="centers" element={<CentersDashboard />} />
               <Route path="testimonials" element={<TestimonialsDashboard />} />
               <Route path="media" element={<MediaManagement />} />
+              <Route path="blogs" element={<BlogsDashboard />} />
+              <Route path="settings" element={<SettingsDashboard />} />
             </Route>
 
             {/* Public Routes */}
@@ -104,8 +118,10 @@ export default function App() {
             <Route path="/daycare" element={<Daycare />} />
             <Route path="/summer-club" element={<SummerClub />} />
             <Route path="/parents-talk" element={<ParentTalks />} />
-            <Route path="/blogs/:slug" element={<BlogPost />} />
-            <Route path="/blogs" element={<BlogFeed posts={BLOG_POSTS} />} />
+            <Route path="/blogs/:id" element={<BlogPost />} />
+            <Route path="/blogs" element={<BlogFeed />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
           </Routes>
         </Suspense>
       </main>

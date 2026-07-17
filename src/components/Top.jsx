@@ -43,7 +43,7 @@ export default function TopBar() {
           >
             <Clock size={14} className="sm:size-[16px]" />
             <span className="text-[#D08407]">Opening:</span>
-            <span>9:30am – 3:30pm</span>
+            <span>9:00am – 04:00pm</span>
           </motion.div>
         </div>
 

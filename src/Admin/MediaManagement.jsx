@@ -4,8 +4,8 @@ import { Upload, X, Trash2, Edit2, Plus, Image as ImageIcon, Filter, Loader2 } f
 import toast from 'react-hot-toast';
 import CropModal from "./CropModal";
 
-const PAGES = ["Home", "About", "Programs", "Admissions", "Gallery", "Contact", "Testimonials", "SummerClub", "Daycare", "Courses", "Program_Details", "General"];
-const SECTIONS = {
+const PAGES = ["Home", "About", "Programs", "Admissions", "Gallery", "Contact", "Testimonials", "SummerClub", "Daycare", "Courses", "Program_Details", "General", "Centers"];
+const INITIAL_SECTIONS = {
   Home: ["Hero_Main", "Hero_Side", "Why_Choose_Us", "Franchise_Banner"],
   About: ["Main_Graphic", "Vision_Banner", "Director_Image"],
   Programs: ["Nestlers_Header", "Bambino_Header", "Junior_Header", "Senior_Header"],
@@ -17,11 +17,13 @@ const SECTIONS = {
   Daycare: ["Header_Image", "Side_Image"],
   Courses: ["Main_Banner", "Program_Banner", "Sensory", "Music", "Motor", "Story", "Art", "Dance", "Phonics", "Math", "Creative"],
   Program_Details: ["Nestlers_Tree", "Nestlers_Play", "Bambino_Tree", "Bambino_Girl", "Junior_Tree", "Junior_Toddler", "Senior_Tree", "Senior_Boy"],
-  General: ["Navbar_Logo", "Footer_Logo", "Schedule_Visit_Side", "Parents_Talk_Banner"]
+  General: ["Navbar_Logo", "Footer_Logo", "Schedule_Visit_Side", "Parents_Talk_Banner"],
+  Centers: ["Flagship_Hero", "General"]
 };
 
 export default function MediaManagement() {
   const [media, setMedia] = useState([]);
+  const [sections, setSections] = useState(INITIAL_SECTIONS);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [selectedPage, setSelectedPage] = useState("All");
@@ -71,7 +73,24 @@ export default function MediaManagement() {
 
   useEffect(() => {
     fetchMedia();
+    fetchCenters();
   }, []);
+
+  const fetchCenters = async () => {
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
+    try {
+      const res = await fetch(`${API_BASE}/centers`);
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        setSections(prev => ({
+          ...prev,
+          Centers: ["Flagship_Hero", "General", ...data.map(c => c.name)]
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchMedia = async () => {
     const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com";
@@ -277,7 +296,7 @@ export default function MediaManagement() {
                 value={targetPage}
                 onChange={(e) => {
                   setTargetPage(e.target.value);
-                  setTargetSection(SECTIONS[e.target.value][0]);
+                  setTargetSection(sections[e.target.value]?.[0] || "");
                 }}
                 className="w-full bg-gray-50 border border-gray-200 text-gray-900 px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/50"
               >
@@ -292,7 +311,7 @@ export default function MediaManagement() {
                 onChange={(e) => setTargetSection(e.target.value)}
                 className="w-full bg-gray-50 border border-gray-200 text-gray-900 px-4 py-3 rounded-xl outline-none focus:ring-2 focus:ring-orange-500/50"
               >
-                {SECTIONS[targetPage]?.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
+                {sections[targetPage]?.map(s => <option key={s} value={s}>{s.replace(/_/g, ' ')}</option>)}
               </select>
             </div>
 
@@ -395,44 +414,44 @@ export default function MediaManagement() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="group relative bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="aspect-[4/3] overflow-hidden">
+                <div className="relative aspect-[4/3] overflow-hidden">
                   <img
                     src={img.image_url?.startsWith('data:image') || img.image_url?.startsWith('http') ? img.image_url : `${import.meta.env.VITE_API_BASE_URL || "https://bluestoneinternationalpreschool.com"}${img.image_url}`}
                     alt={img.image_alt}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-10">
+                    <button
+                      onClick={() => triggerEdit(img)}
+                      className="w-10 h-10 bg-white text-blue-600 rounded-full flex items-center justify-center hover:scale-110 shadow-lg transition-transform"
+                      title="Edit"
+                    >
+                      <Edit2 size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(img.id)}
+                      className="w-10 h-10 bg-white text-red-600 rounded-full flex items-center justify-center hover:scale-110 shadow-lg transition-transform"
+                      title="Delete"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
                 <div className="p-4 flex items-center justify-between">
                   <div>
                     <p className="text-xs font-bold text-gray-900 uppercase tracking-tighter">{img.page_name} - {img.section_name?.replace(/_/g, ' ')}</p>
                     <p className="text-[10px] text-gray-500 truncate max-w-[150px]">{img.image_alt || "No descriptor"}</p>
                   </div>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex items-center gap-3">
                     <button
                       onClick={() => toggleStatus(img)}
-                      className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all shadow-sm ${img.status === 1
-                          ? "bg-green-100 text-green-700 border border-green-200 hover:bg-green-200"
-                          : "bg-red-100 text-red-700 border border-red-200 hover:bg-red-200"
-                        }`}
+                      className={`relative w-10 h-5 rounded-full transition-all p-1 flex items-center ${img.status === 1 ? 'bg-green-100' : 'bg-red-100'}`}
                     >
-                      {img.status === 1 ? "Active" : "Inactive"}
+                      <div className={`w-3.5 h-3.5 rounded-full transition-all shadow-sm ${img.status === 1 ? 'bg-green-500 ml-5' : 'bg-red-500 ml-0.5'}`} />
                     </button>
-                    <div className="flex gap-1">
-                      <button
-                        onClick={() => triggerEdit(img)}
-                        className="p-1.5 bg-blue-50/50 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
-                        title="Edit"
-                      >
-                        <Edit2 size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(img.id)}
-                        className="p-1.5 bg-red-50/50 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all opacity-0 group-hover:opacity-100"
-                        title="Delete"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+                    <span className={`text-[10px] font-black uppercase tracking-tighter ${img.status === 1 ? 'text-green-600' : 'text-red-600'}`}>
+                      {img.status === 1 ? 'Active' : 'Inactive'}
+                    </span>
                   </div>
                 </div>
               </motion.div>
